@@ -2,3 +2,5 @@
 # This file is deliberately empty, but required by the Azure WebApp deployment method
 # All runtime dependencies are held in pyproject.toml. All dev/build-time dependencies are held
 # in dev-requirements.txt
+
+uvicorn
