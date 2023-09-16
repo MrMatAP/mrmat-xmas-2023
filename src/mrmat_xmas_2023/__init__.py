@@ -23,6 +23,11 @@ async def healthz():
     return {"status": "OK", 'version': __version__}
 
 
+@app.get('/api/version')
+async def version():
+    return {"version": __version__}
+
+
 app.mount("/",
           fastapi.staticfiles.StaticFiles(directory=os.path.join(os.path.dirname(__file__), 'static'), html=True),
           name="static")
