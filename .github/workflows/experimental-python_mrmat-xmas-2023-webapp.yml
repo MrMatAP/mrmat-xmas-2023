@@ -7,7 +7,7 @@ name: Build and deploy Python app to Azure Web App - mrmat-xmas-2023-webapp
 on:
   push:
     branches:
-      - experimental/python
+      - experimental/foo
   workflow_dispatch:
 
 jobs:

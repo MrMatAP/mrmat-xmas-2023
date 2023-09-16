@@ -86,6 +86,15 @@ jobs:
           build/junit.xml
           build/coverage.xml
 
+    - name: Conditional Deploy
+      uses: azure/webapps-deploy@v2
+      id: deploy-to-webapp
+      with:
+        app-name: 'mrmat-xmas-2023-webapp'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_c89af19344af48ce856eecaf5428a6ea }}
+        package: 'dist/deploy.zip'
+
     - name: Conditional Release
       uses: marvinpinto/action-automatic-releases@latest
       if: (github.event.pull_request.merged == true && github.base_ref == 'main')
