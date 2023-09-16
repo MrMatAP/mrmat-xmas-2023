@@ -92,7 +92,7 @@ jobs:
       with:
         app-name: 'mrmat-xmas-2023-webapp'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_c89af19344af48ce856eecaf5428a6ea }}
+        publish-profile: ${{ secrets.publishProfile }}
         package: 'dist/deploy.zip'
 
     - name: Conditional Release
