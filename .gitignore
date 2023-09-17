@@ -246,3 +246,5 @@ dmypy.json
 .prof
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains,python
+
+src/mrmat_xmas_2023/static/**/*
