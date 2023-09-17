@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev-shared": "vite --host",
     "build": "vite build",
-    "package": "vite build --outDir ../mrmat_xmas_2023/static/",
+    "package": "vite build --outDir ../mrmat_xmas_2023/static/ --emptyOutDir",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
