@@ -73,10 +73,9 @@ jobs:
 
     - name: Build
       run: |
-        cd src/frontend
+        cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
-        npm run build
-        cp -R ${GITHUB_WORKSPACE}/src/frontend/dist/* ${GITHUB_WORKSPACE}/src/mrmat_xmas_2023/static/
+        npm run package
         cd ${GITHUB_WORKSPACE}/
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
