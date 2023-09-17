@@ -13,21 +13,21 @@ except importlib.metadata.PackageNotFoundError:
 app = fastapi.FastAPI()
 
 
-@app.get("/api/hello")
+@app.get('/api/hello')
 async def root():
-    return {"message": "Hello World"}
+    return {'message': 'Hello World'}
 
 
-@app.get("/api/healthz")
+@app.get('/api/healthz')
 async def healthz():
-    return {"status": "OK", 'version': __version__}
+    return {'status': 'OK', 'version': __version__}
 
 
 @app.get('/api/appState')
 async def app_state():
-    return {"version": __version__}
+    return {'version': __version__}
 
 
-app.mount("/",
+app.mount('/',
           fastapi.staticfiles.StaticFiles(directory=os.path.join(os.path.dirname(__file__), 'static'), html=True),
-          name="static")
+          name='static')
