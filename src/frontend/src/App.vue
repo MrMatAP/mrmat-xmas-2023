@@ -4,7 +4,7 @@ import { store } from '@/store.js'
 import AppBlurredOverlay from "@/components/AppBlurredOverlay.vue";
 import AppLoading from '@/components/AppLoading.vue'
 import AppError from '@/components/AppError.vue'
-import Header from "@/components/Header.vue";
+import AppHeader from "@/components/AppHeader.vue";
 
 onMounted(() => {
   fetch('/api/appState')
@@ -31,7 +31,7 @@ onMounted(() => {
     <AppLoading/>
     <AppError/>
   </AppBlurredOverlay>
-  <Header/>
+  <AppHeader/>
   <router-view/>
 <!--  <div class="main">-->
 <!--    <p>Version: {{ store.appState.version }}</p>-->

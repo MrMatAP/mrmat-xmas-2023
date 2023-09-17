@@ -1,9 +1,9 @@
 <script setup>
-import Content from "@/components/Content.vue";
+import AppContent from "@/components/AppContent.vue";
 </script>
 
 <template>
-  <Content/>
+  <AppContent/>
 </template>
 
 <style scoped>
