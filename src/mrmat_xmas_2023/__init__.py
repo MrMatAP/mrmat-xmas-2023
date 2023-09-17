@@ -23,8 +23,8 @@ async def healthz():
     return {"status": "OK", 'version': __version__}
 
 
-@app.get('/api/version')
-async def version():
+@app.get('/api/appState')
+async def app_state():
     return {"version": __version__}
 
 

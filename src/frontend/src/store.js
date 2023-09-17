@@ -1,7 +1,15 @@
-import { reactive } from 'vue'
+import {reactive} from 'vue'
 
 export const store = reactive({
-    preloading: true,
-    error: true,
-    version: ''
+    appState: {
+        isLoading: true,
+        isError: false,
+        errorMessageId: 'unknown',
+        version: '',
+    },
+    identity: {
+        name: 'Stranger',
+        greeting: 'Happy Holidays',
+        isAdmin: true
+    }
 })

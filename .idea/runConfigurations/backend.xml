@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="mrmat-xmas-2023" type="Python.FastAPI">
+  <configuration default="false" name="backend" type="Python.FastAPI">
     <option name="appName" value="app" />
     <option name="file" value="$PROJECT_DIR$/src/mrmat_xmas_2023/__init__.py" />
     <module name="mrmat-xmas-2023" />
