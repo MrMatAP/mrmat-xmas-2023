@@ -5,9 +5,8 @@ import { store } from '@/store.js'
 <template>
 <header>
   <div class="inner-wrapper">
-    <a href="#">{{ store.identity.greeting }}, {{ store.identity.name }}</a>
+    <router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link>
     <nav>
-      <router-link to="/">Home</router-link>
       <router-link to="/admin" v-show="store.identity.isAdmin">Admin</router-link>
       <p>{{ store.appState.version }}</p>
     </nav>
