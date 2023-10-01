@@ -28,6 +28,13 @@ async def app_state():
     return {'version': __version__}
 
 
+@app.get('/api/landing/{code}')
+async def landing(code: str):
+    response = fastapi.responses.RedirectResponse('/')
+    response.set_cookie(key='user', value=code)
+    return response
+
+
 app.mount('/',
           fastapi.staticfiles.StaticFiles(directory=os.path.join(os.path.dirname(__file__), 'static'), html=True),
           name='static')
