@@ -1,6 +1,7 @@
 import os
 import importlib.metadata
 
+import msal
 import fastapi
 import fastapi.staticfiles
 
@@ -10,7 +11,17 @@ except importlib.metadata.PackageNotFoundError:
     # You have not yet installed this as a package, likely because you're hacking on it in some IDE
     __version__ = '0.0.0.dev0'
 
+cc_app = msal.ConfidentialClientApplication(
+    authority='https://login.microsoftonline.com/common',
+    client_id='2231d20f-81a5-4107-acab-799c31ee2104',
+    client_credential='IjE8Q~pUl0vgU.szgXCF77fSGepdXZw8r4fBicBo'
+)
 app = fastapi.FastAPI()
+
+
+@app.get('/api/auth-response')
+async def auth_response():
+    pass
 
 
 @app.get('/api/hello')

@@ -28,6 +28,9 @@ dependencies = [
     "fastapi~=0.103.1",     # MIT
     "uvicorn~=0.23.2",      # BSD 3-Clause
     "httpx~=0.25.0",        # BSD 3-Clause
+    "msal~=1.24.1",         # MIT
+    "identity~=0.3.0",      # MIT
+    "pyyaml~=6.0.1",        # MIT
 ]
 dynamic = ["version"]
 
