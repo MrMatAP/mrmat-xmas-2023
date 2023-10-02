@@ -42,7 +42,7 @@ class Config:
     client_secret: str = dataclasses.field(default=None)
     authority: str = dataclasses.field(default=None)
 
-    def __init__(self, config_file: pathlib.Path = pathlib.Path():
+    def __init__(self, config_file: pathlib.Path = None):
         self._logger = logging.getLogger(f'{self.__class__.__module__}.{self.__class__.__name__}')
         if config_file:
             self.load(config_file)
