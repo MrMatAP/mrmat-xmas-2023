@@ -1,3 +1,4 @@
+import os
 import logging
 import pathlib
 import dataclasses
@@ -35,12 +36,16 @@ class ConfigException(Exception):
 @dataclasses.dataclass(init=False)
 class Config:
     """
-    Configuration handling for mrmat_xmas_2023
+    Configuration handling for mrmat_xmas_2023.
+
+    Configuration values will pick up their values from their corresponding upper-case environment variables. If they
+    are not present, a config file is provided and that config file actually exists then they are overridden by that
+    config file.
     """
 
-    client_id: str = dataclasses.field(default=None)
-    client_secret: str = dataclasses.field(default=None)
-    authority: str = dataclasses.field(default=None)
+    client_id: str = dataclasses.field(default=os.getenv('CLIENT_ID'))
+    client_secret: str = dataclasses.field(default=os.getenv('CLIENT_SECRET'))
+    authority: str = dataclasses.field(default=os.getenv('AUTHORITY'))
 
     def __init__(self, config_file: pathlib.Path = None):
         self._logger = logging.getLogger(f'{self.__class__.__module__}.{self.__class__.__name__}')
