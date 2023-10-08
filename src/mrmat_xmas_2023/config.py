@@ -43,9 +43,15 @@ class Config:
     config file.
     """
 
-    client_id: str = dataclasses.field(default=os.getenv('CLIENT_ID'))
-    client_secret: str = dataclasses.field(default=os.getenv('CLIENT_SECRET'))
-    authority: str = dataclasses.field(default=os.getenv('AUTHORITY'))
+    backend_client_id: str = dataclasses.field(default=os.getenv('BACKEND_CLIENT_ID'))
+    backend_client_secret: str = dataclasses.field(default=os.getenv('BACKEND_CLIENT_SECRET'))
+    # backend_cors_origins: list[str] = dataclasses.field(default_factory=lambda: ['http://localhost:8000'])
+    openapi_client_id: str = dataclasses.field(default=os.getenv('OPENAPI_CLIENT_ID'))
+    tenant_id: str = dataclasses.field(default=os.getenv('TENANT_ID'))
+    cosmos_endpoint: str = dataclasses.field(default=os.getenv('COSMOS_ENDPOINT'))
+    cosmos_key: str = dataclasses.field(default=os.getenv('COSMOS_KEY'))
+    cosmos_db: str = dataclasses.field(default=os.getenv('COSMOS_DB'))
+    cosmos_container: str = dataclasses.field(default=os.getenv('COSMOS_CONTAINER'))
 
     def __init__(self, config_file: pathlib.Path = None):
         self._logger = logging.getLogger(f'{self.__class__.__module__}.{self.__class__.__name__}')
