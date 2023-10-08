@@ -1,7 +1,9 @@
 //
-// Internationalisation
+// i18n
 
-export const messages = {
+import { createI18n } from 'vue-i18n'
+
+const messages = {
     en: {
         errorHeader: "Everything is fine... not",
         errorMessages: {
@@ -19,3 +21,8 @@ export const messages = {
         },
     }
 }
+
+export const i18n = createI18n(({
+    locale: 'en',
+    messages
+}))

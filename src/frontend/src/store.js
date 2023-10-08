@@ -10,6 +10,6 @@ export const store = reactive({
     identity: {
         name: 'Stranger',
         greeting: 'Happy Holidays',
-        isAdmin: true
+        isAdmin: false
     }
 })
