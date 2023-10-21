@@ -2,12 +2,12 @@
 // Routing
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import AppHome from '@/components/AppHome.vue'
-import AppStranger from '@/components/AppStranger.vue'
-import AppAdmin from '@/components/AppAdmin.vue'
-import AppFailed from '@/components/AppFailed.vue'
-import { auth, loginRequest } from '@/auth.js';
-import { store } from '@/store.js'
+import AppHome from './components/AppHome.vue'
+import AppStranger from './components/AppStranger.vue'
+import AppAdmin from './components/AppAdmin.vue'
+import AppFailed from './components/AppFailed.vue'
+import { auth } from './auth.js';
+import { store } from './store.js'
 
 export const router = createRouter({
     history: createWebHashHistory(),
@@ -43,7 +43,7 @@ export const router = createRouter({
             name: 'Admin',
             component: AppAdmin,
             beforeEnter: () => {
-                if(! store.isAADAuthenticated) return { name: 'AppFailed' }
+                if(! auth.isAuthenticated()) return { name: 'AppFailed' }
                 return true
             }
             // beforeEnter: () => {
@@ -68,15 +68,9 @@ export const router = createRouter({
             path: '/:code',
             name: 'OAuthResponse',
             redirect: () => {
-                auth.handleRedirectPromise().then( () => {
-                    const accounts = auth.getAllAccounts()
-                    if(accounts.length > 0) {
-                        auth.setActiveAccount(accounts[0])
-                        return { name: 'Admin' }
-                    }
-                }).catch( (err) => {
-                    console.log('An error occured during handleRedirectPromise: ' + err)
-                    return { name: 'Failed' }
+                auth.handleRedirect().then( (success) => {
+                    if(success) return 'Admin'
+                    return 'Failed'
                 })
             }
         },
@@ -88,6 +82,7 @@ export const router = createRouter({
     ]
 })
 router.beforeEach( (to) => {
+    if(to.name === 'Admin')
     if(! store.isAADAuthenticated && to.name === 'Admin') {
         if(auth.getActiveAccount()) return true
         auth.loginRedirect(loginRequest)

@@ -1,5 +1,5 @@
-<script setup>
-import AppContent from "@/components/AppContent.vue";
+<script setup lang="ts">
+import AppContent from "../components/AppContent.vue";
 </script>
 
 <template>

@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-import { store } from '@/store.js'
+import { store } from '../store.js'
 
 const errorMessageId = computed(() => {
   return 'errorMessages.' + store.appState.errorMessageId

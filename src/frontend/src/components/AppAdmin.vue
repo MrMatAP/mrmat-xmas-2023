@@ -1,5 +1,5 @@
-<script setup>
-import { auth } from '@/auth.js'
+<script setup lang="ts">
+import { auth } from '../auth.js'
 
 const account = auth.getActiveAccount()
 </script>

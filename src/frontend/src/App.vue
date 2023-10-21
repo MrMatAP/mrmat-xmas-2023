@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 
-import { store } from '@/store.js'
-import AppHeader from "@/components/AppHeader.vue";
+import { store } from './store.js'
+import AppHeader from "./components/AppHeader.vue";
 
 onMounted(() => {
   fetch('/api/appState')
