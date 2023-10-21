@@ -1,6 +1,7 @@
 import {reactive} from 'vue'
 
 export const store = reactive({
+    isCodeAuthenticated: false,
     isAADAuthenticated: false,
     isIdentified: false,
     appState: {
@@ -10,10 +11,12 @@ export const store = reactive({
         version: '',
     },
     identity: {
-        id: 0,
+        id: undefined,
         name: 'Stranger',
-        year: 1970,
         greeting: 'Happy Holidays',
+        language: 'en',
+
+        year: 1970,
         isAdmin: false
     }
 })

@@ -1,119 +1,111 @@
 //
 // Routing
 
-import { createRouter, createWebHashHistory } from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import AppHome from './components/AppHome.vue'
 import AppStranger from './components/AppStranger.vue'
 import AppAdmin from './components/AppAdmin.vue'
 import AppFailed from './components/AppFailed.vue'
-import { auth } from './auth.js';
+import NotFound from './components/NotFound.vue'
 import { store } from './store.js'
+import { auth_code } from './auth_code.ts'
+import { auth_aad } from './auth_aad.ts'
+
+declare module 'vue-router' {
+    interface RouteMeta {
+        requiresCodeAuthentication: boolean
+        requiresAADAuthentication: boolean
+    }
+}
 
 export const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes: [
         {
             path: '/',
             name: 'Home',
             component: AppHome,
-        },
-        {
-            path: '/stranger',
-            name: 'Stranger',
-            component: AppStranger
-        },
-        {
-            path: '/landing/:user_id',
-            name: 'Landing',
-            redirect: to => {
-                fetch('/api/landing/' + to.params.user_id)
-                    .then(r => { return r.json() })
-                    .then(d => {
-                        store.isIdentified = true
-                        store.identity.id = d.id
-                        store.identity.name = d.name
-                        store.identity.year = d.year
-                        return { name: 'Home' }
-                    })
-                return { name: 'Stranger' }
+            meta: {
+                requiresCodeAuthentication: true,
+                requiresAADAuthentication: false
             }
         },
         {
             path: '/admin',
             name: 'Admin',
             component: AppAdmin,
-            beforeEnter: () => {
-                if(! auth.isAuthenticated()) return { name: 'AppFailed' }
-                return true
-            }
-            // beforeEnter: () => {
-            //     if(auth.getActiveAccount()) return true
-            //     auth.loginRedirect(loginRequest)
-            //         .then( () => {
-            //             store.isAADAuthenticated = true
-            //             store.identity.id = auth.getActiveAccount().nativeAccountId
-            //             store.identity.name = auth.getActiveAccount().name
-            //             store.identity.year = 2023
-            //             console.log('Logged in')
-            //             return { name: 'Admin' }
-            //         })
-            //         .catch( (err) => {
-            //             console.log('Failed to login: ' + err)
-            //             return { name: 'Failed' }
-            //         })
-            //     return false
-            // }
+            meta: {
+                requiresCodeAuthentication: false,
+                requiresAADAuthentication: true
+            },
         },
         {
-            path: '/:code',
-            name: 'OAuthResponse',
-            redirect: () => {
-                auth.handleRedirect().then( (success) => {
-                    if(success) return 'Admin'
-                    return 'Failed'
-                })
-            }
+            path: '/stranger',
+            name: 'Stranger',
+            component: AppStranger,
         },
         {
             path: '/failed',
             name: 'Failed',
             component: AppFailed,
+            meta: {
+                requiresCodeAuthentication: false,
+                requiresAADAuthentication: false
+            }
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'NotFound',
+            component: NotFound,
+            meta: {
+                requiresCodeAuthentication: false,
+                requiresAADAuthentication: false
+            }
         }
     ]
 })
-router.beforeEach( (to) => {
-    if(to.name === 'Admin')
-    if(! store.isAADAuthenticated && to.name === 'Admin') {
-        if(auth.getActiveAccount()) return true
-        auth.loginRedirect(loginRequest)
-            .then( () => {
-                store.isAADAuthenticated = true
-                store.identity.id = auth.getActiveAccount().nativeAccountId
-                store.identity.name = auth.getActiveAccount().name
-                store.identity.year = 2023
-                console.log('Logged in')
-                return true
+
+/**
+ * Navigation Guard to protect page access without the necessary authentication.
+ * This is called before entering all routes and configured by two meta fields in the route object itself. We support
+ * to forms of authentication, the 'Code Authentication' from users provided by a query parameter and proper AAD
+ * authentication for the admin interface.
+ *
+ * The guard will grant access to target routes configured to require code authentication if the store considers the
+ * user to be code authenticated. Otherwise the codeauth object will be asked to authenticate the user based on a
+ * query parameter and access granted if authentication succeeds. The user is redirected to the desired path but with the query
+ * parameters explicitly removed.
+ *
+ * The user is redirected to the Stranger page if the query parameter is missing or it fails authentication.
+ *
+ * TODO: Actually remove the query parameter somehow
+ */
+router.beforeEach( async (to) => {
+    if(to.meta.requiresCodeAuthentication) {
+        console.log('Route ' + (to.name as string) + ' requires code authentication')
+        if(store.isCodeAuthenticated) {
+            console.log('Already code authenticated (in beforeEach)')
+            return true
+        }
+        await auth_code.authenticate(to.query.c as string).then( (result) => {
+            if(result) return { name: to.name, query: {} }
+            return { name: 'Stranger' }
+        })
+    } else if(to.meta.requiresAADAuthentication) {
+        console.log('Route ' + (to.name as string) + ' requires aad authentication')
+        console.dir(to)
+        if(store.isAADAuthenticated) {
+            console.log('Already AAD authenticated (in beforeEach)')
+            return true
+        }
+        if(to.hash) {
+            await auth_aad.handleRedirect()
+        } else {
+            await auth_aad.authenticate().then( (result) => {
+                if(result) return true
+                return { name: 'Stranger' }
             })
-            .catch( (err) => {
-                console.log('Failed to login: ' + err)
-                return { name: 'Failed' }
-            })
-        return false
+        }
     }
-    if(store.isIdentified || store.isAADAuthenticated || to.name === 'OAuthResponse' || to.name === 'Stranger') return true
-    return { name: 'Stranger' }
+    return true
 })
-// router.beforeEach(async (to) => {
-//     if (! to.name || to.name === 'Stranger') return true
-//     auth.handleRedirectPromise().then( () => {
-//         const accounts = auth.getAllAccounts()
-//         if(accounts.length > 0) {
-//             auth.setActiveAccount(accounts[0])
-//             store.identity.isAdmin = true
-//             return true
-//         }
-//     }).catch( (err) => {
-//         console.log('An error occured during handleRedirectPromise: ' + err)
-//         return 'AppFailed'
-//     })
-// })

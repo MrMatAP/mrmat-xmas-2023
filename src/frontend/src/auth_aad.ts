@@ -4,6 +4,7 @@ import {
     Configuration,
     IPublicClientApplication
 } from "@azure/msal-browser";
+import { store } from './store.ts'
 
 class AADAuthentication {
 
@@ -54,8 +55,17 @@ class AADAuthentication {
         return new AADAuthentication(auth)
     }
 
-    isAuthenticated(): boolean {
-        return this.auth.getActiveAccount() !== null
+    async authenticate(): Promise<boolean> {
+        if(this.auth.getActiveAccount()) return true
+        await this.auth.loginRedirect(AADAuthentication.loginRequest).then( () => {
+            let activeAccount = this.auth.getActiveAccount()
+            if(!activeAccount) return false
+            store.isAADAuthenticated = true
+            return true
+        }).catch( (err) => {
+            console.log('An error occurred during loginRedirect: ' + err)
+        })
+        return false
     }
 
     async handleRedirect(): Promise<boolean> {
@@ -63,6 +73,7 @@ class AADAuthentication {
             const accounts = this.auth.getAllAccounts()
             if(accounts.length > 0) {
                 this.auth.setActiveAccount(accounts[0])
+                store.identity.name = accounts[0].name as string
                 return true
             }
         }).catch( (err) => {
@@ -70,14 +81,6 @@ class AADAuthentication {
         })
         return false
     }
-
-    handleAADAuthentication(): boolean {
-        return true
-    }
-
-    handleMrMatAuthentication(): boolean {
-        return true
-    }
 }
 
-export const auth = await AADAuthentication.initialize()
+export const auth_aad = await AADAuthentication.initialize()
