@@ -52,6 +52,9 @@ class Config:
     cosmos_key: str = dataclasses.field(default=os.getenv('COSMOS_KEY'))
     cosmos_db: str = dataclasses.field(default=os.getenv('COSMOS_DB'))
     cosmos_container: str = dataclasses.field(default=os.getenv('COSMOS_CONTAINER'))
+    container_endpoint: str = dataclasses.field(default=os.getenv('CONTAINER_ENDPOINT'))
+    container_name: str = dataclasses.field(default=os.getenv('CONTAINER_NAME'))
+    container_directory: str = dataclasses.field(default=os.getenv('CONTAINER_DIRECTORY'))
 
     def __init__(self, config_file: pathlib.Path = None):
         self._logger = logging.getLogger(f'{self.__class__.__module__}.{self.__class__.__name__}')
