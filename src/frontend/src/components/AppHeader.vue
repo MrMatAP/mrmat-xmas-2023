@@ -5,10 +5,10 @@ import { store } from '../store.js'
 <template>
 <header>
   <div class="inner-wrapper">
-    <router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link>
+    <h2><router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link></h2>
     <nav>
       <router-link to="/admin" v-show="store.identity.isAdmin">Admin</router-link>
-      <p>{{ store.appState.version }}</p>
+      <p>{{ store.version }}</p>
     </nav>
   </div>
 </header>

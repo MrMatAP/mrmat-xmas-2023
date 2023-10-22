@@ -1,6 +1,7 @@
-import {reactive} from 'vue'
+import { reactive } from 'vue'
 
 export const store = reactive({
+    version: 'unknown',
     isCodeAuthenticated: false,
     isAADAuthenticated: false,
     isIdentified: false,
@@ -8,15 +9,17 @@ export const store = reactive({
         isLoading: true,
         isError: false,
         errorMessageId: 'unknown',
-        version: '',
     },
     identity: {
         id: undefined,
         name: 'Stranger',
         greeting: 'Happy Holidays',
         language: 'en',
-
-        year: 1970,
-        isAdmin: false
+        userMessage: '',
+        hasPicture: false,
+        pictureURL: '/tap-to-update.png'
+    },
+    admin: {
+        identities: []
     }
 })

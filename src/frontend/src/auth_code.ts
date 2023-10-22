@@ -1,6 +1,7 @@
 // Code authentication
 
 import { store } from './store.ts'
+import {auth_aad} from "./auth_aad.ts";
 
 class CodeAuthentication {
 
@@ -15,10 +16,27 @@ class CodeAuthentication {
         }
 
         console.log('Authenticating code ' + code)
-        store.isCodeAuthenticated = true
-        // store.identity.id = code
-        store.identity.name = 'John Doe'
-        return true
+        fetch('/api/users/' + code)
+            .then(r => {
+                if(r.status === 404) throw Error('resourceNotFound')
+                return r.json()
+            })
+            .then(d => {
+                store.identity.id = d.id
+                store.identity.name = d.name
+                store.identity.greeting = d.greeting
+                store.identity.language = d.language
+                store.appState.isLoading = false
+                store.isCodeAuthenticated = true
+                return true
+            })
+            .catch( (e) => {
+                console.log('Got an exception ' + e.reason)
+                store.appState.isError = true
+                store.appState.errorMessageId = e.reason
+                store.appState.isLoading = false
+                return false
+            })
     }
 }
 
