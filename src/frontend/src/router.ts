@@ -3,6 +3,7 @@
 
 import {createRouter, createWebHistory} from 'vue-router';
 import AppHome from './components/AppHome.vue'
+import MakingOf from "./components/MakingOf.vue";
 import AppStranger from './components/AppStranger.vue'
 import AppAdmin from './components/AppAdmin.vue'
 import AppFailed from './components/AppFailed.vue'
@@ -22,9 +23,27 @@ export const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: '/',
-            name: 'Home',
+            path: '/:code?',
+            name: 'home',
             component: AppHome,
+            meta: {
+                requiresCodeAuthentication: true,
+                requiresAADAuthentication: false
+            }
+        },
+        {
+            path: '/ldg/:code?',
+            name: 'codelanding',
+            component: AppStranger,
+            meta: {
+                requiresCodeAuthentication: false,
+                requiresAADAuthentication: false
+            },
+        },
+        {
+            path: '/making-of',
+            name: 'makingof',
+            component: MakingOf,
             meta: {
                 requiresCodeAuthentication: true,
                 requiresAADAuthentication: false
@@ -41,7 +60,7 @@ export const router = createRouter({
         },
         {
             path: '/stranger',
-            name: 'Stranger',
+            name: 'stranger',
             component: AppStranger,
         },
         {
@@ -77,21 +96,17 @@ export const router = createRouter({
  * parameters explicitly removed.
  *
  * The user is redirected to the Stranger page if the query parameter is missing or it fails authentication.
- *
- * TODO: Actually remove the query parameter somehow
  */
 router.beforeEach( async (to) => {
-    if(to.meta.requiresCodeAuthentication) {
-        console.log('Route ' + (to.name as string) + ' requires code authentication')
-        if(store.isCodeAuthenticated) {
-            console.log('Already code authenticated (in beforeEach)')
-            return true
-        }
-        await auth_code.authenticate(to.query.c as string).then( (result) => {
-            if(result) return { name: to.name, query: {} }
-            return { name: 'Stranger' }
-        })
-    } else if(to.meta.requiresAADAuthentication) {
+    console.log('Your identity is: ' + store.identity.name)
+    console.log('Authentication Status: ' + auth_code.isAuthenticated)
+    console.log('Code: ' + (to.params.code as string))
+    if(to.meta.requiresCodeAuthentication && ! auth_code.isAuthenticated) {
+        if(await auth_code.authenticate(to.params.code as string)) return { name: 'home' }
+        //if(await auth_code.authenticate(to.params.code as string)) return { name: to.name }
+        return { name: 'stranger' }
+    }
+    if(to.meta.requiresAADAuthentication) {
         console.log('Route ' + (to.name as string) + ' requires aad authentication')
         console.dir(to)
         if(store.isAADAuthenticated) {
@@ -103,7 +118,7 @@ router.beforeEach( async (to) => {
         } else {
             await auth_aad.authenticate().then( (result) => {
                 if(result) return true
-                return { name: 'Stranger' }
+                return { name: 'stranger' }
             })
         }
     }

@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { store } from '../store.ts'
 
 const pictureURL = computed( () => {
-  if(store.identity.hasPicture) return this.store.pictureURL
+  //if(store.identity.hasPicture) return store.identity.pictureURL
   return '/tap-to-update.png'
 })
 
@@ -31,7 +31,7 @@ function onRemovePicture(e) {
   console.log('Removing picture')
 }
 
-function onSend(e) {
+function onSend(e: any) {
   e.preventDefault()
   console.log('Sending message')
 }
@@ -67,10 +67,10 @@ function onSend(e) {
     <div class="centered">
       <img :src="pictureURL" alt="Your picture" @click.prevent="onUpdatePicture">
     </div>
-    <p style="white-space: pre-line;">{{ store.userMessage }}</p>
-    <textarea v-bind="store.userMessage" placeholder="Your message"></textarea>
-    <a href="#" @click.prevent="onSelectPicture" v-show="! store.hasPicture">Upload an image</a>
-    <a href="#" @click.prevent="onRemovePicture" v-show="store.hasPicture">Remove the image</a>
+    <p style="white-space: pre-line;">{{ store.identity.userMessage }}</p>
+    <textarea v-bind="store.identity.userMessage" placeholder="Your message"></textarea>
+    <a href="#" @click.prevent="onSelectPicture" v-show="! store.identity.hasPicture">Upload an image</a>
+    <a href="#" @click.prevent="onRemovePicture" v-show="store.identity.hasPicture">Remove the image</a>
 
     <input ref="fileSelector" type="file" @change.prevent="onUploadFile" style="display: none"/>
     <input type="submit" value="Send" @click.prevent="onSend"/>

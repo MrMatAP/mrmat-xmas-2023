@@ -7,7 +7,7 @@ import { store } from '../store.js'
   <div class="inner-wrapper">
     <h2><router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link></h2>
     <nav>
-      <router-link to="/admin" v-show="store.identity.isAdmin">Admin</router-link>
+      <router-link to="/making-of" v-if="store.identity.code !== '-1'">Making Of</router-link>
       <p>{{ store.version }}</p>
     </nav>
   </div>
