@@ -2,8 +2,9 @@ import {
     LogLevel,
     PublicClientApplication,
     Configuration,
-    IPublicClientApplication, RedirectRequest
+    IPublicClientApplication, RedirectRequest, AccountInfo
 } from "@azure/msal-browser";
+import {store} from "./store.ts";
 
 export class AADAuthentication {
 
@@ -54,6 +55,13 @@ export class AADAuthentication {
     static async initialize(): Promise<AADAuthentication> {
         const auth = await PublicClientApplication.createPublicClientApplication(AADAuthentication.msalConfig)
         return new AADAuthentication(auth)
+    }
+
+    activeAccount(): AccountInfo {
+        let account = this.auth.getActiveAccount()
+        if(account) return account
+        store.appState.isError = true
+        throw Error('noAccount')
     }
 }
 

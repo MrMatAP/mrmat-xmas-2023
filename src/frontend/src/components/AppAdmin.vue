@@ -15,7 +15,7 @@ import { auth_aad } from '../auth_aad.ts'
 import { store } from '../store.ts'
 
 onMounted(() => {
-  fetch('/api/users', { headers: { 'Authentication': 'Bearer ' + auth_aad.auth.getActiveAccount().idToken }})
+  fetch('/api/users', { headers: { 'Authentication': 'Bearer ' + auth_aad.activeAccount().idToken }})
       .then(r => {
         if(r.status === 404) throw Error('resourceNotFound')
         return r.json()

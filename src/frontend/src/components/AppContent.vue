@@ -7,14 +7,15 @@ const pictureURL = computed( () => {
   return '/tap-to-update.png'
 })
 
-const fileSelector = ref(null)
+const fileSelector = ref()
 
-function onUploadFile(e) {
+function onUploadFile() {
   console.log('Uploading file')
   const localImage = fileSelector.value.files[0]
+  console.dir(localImage)
 }
 
-function onUpdatePicture(e) {
+function onUpdatePicture(e: Event) {
   e.preventDefault()
   console.log('Updating picture')
   if(! store.identity.hasPicture) {
@@ -22,16 +23,16 @@ function onUpdatePicture(e) {
   }
 }
 
-function onSelectPicture(e) {
+function onSelectPicture(e: Event) {
   e.preventDefault()
   console.log('Selecting picture')
 }
 
-function onRemovePicture(e) {
+function onRemovePicture() {
   console.log('Removing picture')
 }
 
-function onSend(e: any) {
+function onSend(e: Event) {
   e.preventDefault()
   console.log('Sending message')
 }

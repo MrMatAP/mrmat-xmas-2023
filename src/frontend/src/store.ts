@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import {AccountInfo, AuthenticationResult} from "@azure/msal-browser";
+import { AccountInfo } from "@azure/msal-browser";
 
 export class Identity {
     readonly code: string
