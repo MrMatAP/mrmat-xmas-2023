@@ -8,7 +8,7 @@ class CodeAuthentication {
     static LOCAL_STORAGE_KEY = 'code'
     isAuthenticated: boolean = false
 
-    async authenticate(uriCode?: string) {
+    async authenticate(uriCode?: string): Promise<boolean> {
         if(this.isAuthenticated) return true
         try {
             store.appState.isLoading = true

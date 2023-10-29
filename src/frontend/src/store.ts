@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import {AccountInfo, AuthenticationResult} from "@azure/msal-browser";
 
 export class Identity {
     readonly code: string
@@ -21,6 +22,12 @@ export class Identity {
         identity.userMessage = data.userMessage
         identity.hasPicture = data.hasPicture
         identity.pictureURL = data.pictureURL
+        return identity
+    }
+
+    static fromAAD(data: AccountInfo): Identity {
+        const identity = new Identity(data.localAccountId)
+        identity.name = data.name || 'AAD Person'
         return identity
     }
 }

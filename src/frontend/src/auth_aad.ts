@@ -2,13 +2,14 @@ import {
     LogLevel,
     PublicClientApplication,
     Configuration,
-    IPublicClientApplication
+    IPublicClientApplication, RedirectRequest
 } from "@azure/msal-browser";
-import { store } from './store.ts'
 
-class AADAuthentication {
+export class AADAuthentication {
 
-    static loginRequest = {
+    isAuthenticated: boolean = false
+    static loginRequest: RedirectRequest = {
+        redirectUri: '/aadlogin',
         scopes: ['user.read', 'api://xmas-backend/admin']
     }
     static msalConfig: Configuration = {
@@ -53,33 +54,6 @@ class AADAuthentication {
     static async initialize(): Promise<AADAuthentication> {
         const auth = await PublicClientApplication.createPublicClientApplication(AADAuthentication.msalConfig)
         return new AADAuthentication(auth)
-    }
-
-    async authenticate(): Promise<boolean> {
-        if(this.auth.getActiveAccount()) return true
-        await this.auth.loginRedirect(AADAuthentication.loginRequest).then( () => {
-            let activeAccount = this.auth.getActiveAccount()
-            if(!activeAccount) return false
-            store.isAADAuthenticated = true
-            return true
-        }).catch( (err) => {
-            console.log('An error occurred during loginRedirect: ' + err)
-        })
-        return false
-    }
-
-    async handleRedirect(): Promise<boolean> {
-        this.auth.handleRedirectPromise().then( () => {
-            const accounts = this.auth.getAllAccounts()
-            if(accounts.length > 0) {
-                this.auth.setActiveAccount(accounts[0])
-                store.identity.name = accounts[0].name as string
-                return true
-            }
-        }).catch( (err) => {
-            console.log('An error occured during handleRedirectPromise: ' + err)
-        })
-        return false
     }
 }
 
