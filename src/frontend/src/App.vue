@@ -1,19 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
-import { store } from '@/store.js'
-import AppBlurredOverlay from "@/components/AppBlurredOverlay.vue";
-import AppLoading from '@/components/AppLoading.vue'
-import AppError from '@/components/AppError.vue'
-import AppHeader from "@/components/AppHeader.vue";
+import { RouterView } from 'vue-router'
+
+import { store } from './store.js'
+import AppHeader from "./components/AppHeader.vue";
 
 onMounted(() => {
-  fetch('/api/appState')
+  fetch('/api/healthz')
       .then(r => {
         if(r.status === 404) throw Error('serverNotFound')
         return r.json()
       })
       .then(d => {
-        store.appState.version = d.version
+        store.version = d.version
         store.appState.isLoading = false
       })
       .catch( (e) => {
@@ -27,15 +26,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppBlurredOverlay>
-    <AppLoading/>
-    <AppError/>
-  </AppBlurredOverlay>
-  <AppHeader/>
-  <router-view/>
-<!--  <div class="main">-->
-<!--    <p>Version: {{ store.appState.version }}</p>-->
-<!--  </div>-->
+  <RouterView v-slot="{ Component }">
+    <template v-if="Component">
+      <Transition mode="out-in">
+        <KeepAlive>
+          <Suspense>
+            <div>
+              <AppHeader/>
+              <component :is="Component"></component>
+            </div>
+
+            <!-- Loading State -->
+            <template #fallback>
+              Loading...
+            </template>
+          </Suspense>
+        </KeepAlive>
+      </Transition>
+    </template>
+  </RouterView>
 </template>
 
 <style scoped>

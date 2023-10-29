@@ -25,9 +25,17 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "fastapi~=0.103.1",     # MIT
-    "uvicorn~=0.23.2",      # BSD 3-Clause
-    "httpx~=0.25.0",        # BSD 3-Clause
+    "fastapi~=0.104.0",             # MIT
+    "uvicorn~=0.23.2",              # BSD 3-Clause
+    "httpx~=0.25.0",                # BSD 3-Clause
+    "msal~=1.24.1",                 # MIT
+    "identity~=0.3.0",              # MIT
+    "pyyaml~=6.0.1",                # MIT
+    'fastapi-azure-auth~=4.2.1',    # MIT
+    'azure-cosmos~=4.5.1',          # MIT
+    'azure-storage-blob~=12.18.3',  # MIT
+    'azure-identity~=1.4.0',        # MIT
+    'python-multipart~=0.0.6',      # Apache 2.0
 ]
 dynamic = ["version"]
 

@@ -1,12 +1,37 @@
-<script setup>
 
-</script>
 
 <template>
   <article>
-    But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?
+    This is the admin page
+    <ul>
+      <p>Name: {{ store.identity.name }}</p>
+    </ul>
   </article>
 </template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { auth_aad } from '../auth_aad.ts'
+import { store } from '../store.ts'
+
+onMounted(() => {
+  fetch('/api/users', { headers: { 'Authentication': 'Bearer ' + auth_aad.activeAccount().idToken }})
+      .then(r => {
+        if(r.status === 404) throw Error('resourceNotFound')
+        return r.json()
+      })
+      .then(d => {
+        store.admin.identities = d
+        store.appState.isLoading = false
+      })
+      .catch( (e) => {
+        console.log('Got an exception ' + e.reason)
+        store.appState.isError = true
+        store.appState.errorMessageId = e.reason
+        store.appState.isLoading = false
+      })
+})
+</script>
 
 <style scoped>
 article {

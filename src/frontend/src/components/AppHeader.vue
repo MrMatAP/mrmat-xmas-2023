@@ -1,15 +1,14 @@
-<script setup>
-import { store } from '@/store.js'
+<script setup lang="ts">
+import { store } from '../store.js'
 </script>
 
 <template>
 <header>
   <div class="inner-wrapper">
-    <a href="#">{{ store.identity.greeting }}, {{ store.identity.name }}</a>
+    <h2><router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link></h2>
     <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/admin" v-show="store.identity.isAdmin">Admin</router-link>
-      <p>{{ store.appState.version }}</p>
+      <router-link to="/making-of" v-if="store.identity.code !== '-1'">Making Of</router-link>
+      <p>{{ store.version }}</p>
     </nav>
   </div>
 </header>
@@ -39,5 +38,9 @@ header nav > * {
 
 header nav > p {
   font-size: 8px;
+}
+
+header * a {
+  color: var(--xmas-red);
 }
 </style>
