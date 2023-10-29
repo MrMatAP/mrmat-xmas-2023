@@ -45,7 +45,6 @@ class Config:
 
     backend_client_id: str = dataclasses.field(default=os.getenv('BACKEND_CLIENT_ID'))
     backend_client_secret: str = dataclasses.field(default=os.getenv('BACKEND_CLIENT_SECRET'))
-    # backend_cors_origins: list[str] = dataclasses.field(default_factory=lambda: ['http://localhost:8000'])
     openapi_client_id: str = dataclasses.field(default=os.getenv('OPENAPI_CLIENT_ID'))
     tenant_id: str = dataclasses.field(default=os.getenv('TENANT_ID'))
     cosmos_endpoint: str = dataclasses.field(default=os.getenv('COSMOS_ENDPOINT'))
