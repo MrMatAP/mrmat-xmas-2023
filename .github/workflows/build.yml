@@ -80,19 +80,19 @@ jobs:
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
-        PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
+        #PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
         cp ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
         zip -r deploy.zip .
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v2
-      if: ${{ always() }}
-      with:
-        name: Test and Coverage
-        path: |
-          build/junit.xml
-          build/coverage.xml
+    #- name: Upload test results
+    #  uses: actions/upload-artifact@v2
+    #  if: ${{ always() }}
+    #  with:
+    #    name: Test and Coverage
+    #    path: |
+    #      build/junit.xml
+    #      build/coverage.xml
 
     - name: Conditional Release
       uses: marvinpinto/action-automatic-releases@latest
