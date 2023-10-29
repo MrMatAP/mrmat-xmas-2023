@@ -39,4 +39,8 @@ header nav > * {
 header nav > p {
   font-size: 8px;
 }
+
+header * a {
+  color: var(--xmas-red);
+}
 </style>
