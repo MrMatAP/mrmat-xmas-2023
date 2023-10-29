@@ -2,13 +2,10 @@ import os
 import pathlib
 import importlib.metadata
 import typing
-import uuid
 
-import msal
 import fastapi
 import fastapi.middleware.cors
 import fastapi.staticfiles
-import fastapi_azure_auth
 import fastapi_azure_auth.user
 import azure.identity
 import azure.cosmos
