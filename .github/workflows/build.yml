@@ -109,6 +109,6 @@ jobs:
       id: deploy-to-webapp
       with:
         app-name: 'mrmat-xmas-2023-webapp'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.publishProfile }}
+        slot-name: 'Production'
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4AD41E77D660415FA194B9E7002EDE8E }}
         package: 'dist/deploy.zip'
