@@ -34,7 +34,7 @@ dependencies = [
     'fastapi-azure-auth~=4.2.1',    # MIT
     'azure-cosmos~=4.5.1',          # MIT
     'azure-storage-blob~=12.18.3',  # MIT
-    'azure-identity~=1.4.0',        # MIT
+    'azure-identity~=1.15.0',        # MIT
     'python-multipart~=0.0.6',      # Apache 2.0
 ]
 dynamic = ["version"]
