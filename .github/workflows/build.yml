@@ -111,6 +111,5 @@ jobs:
         app-name: mrmat-xmas
         publish-profile: ${{ secrets.PublishProfile }}
         package: 'dist/deploy.zip'
-        startup-command: startup.sh
         type: ZIP
         clean: true
