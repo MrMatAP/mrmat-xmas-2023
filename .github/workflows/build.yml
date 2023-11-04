@@ -108,6 +108,9 @@ jobs:
       #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-webapp
       with:
-        app-name: 'mrmat-xmas-2023-webapp'
+        app-name: mrmat-xmas
         publish-profile: ${{ secrets.PublishProfile }}
         package: 'dist/deploy.zip'
+        startup-command: startup.sh
+        type: ZIP
+        clean: true
