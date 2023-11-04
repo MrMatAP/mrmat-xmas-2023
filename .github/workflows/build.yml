@@ -104,7 +104,7 @@ jobs:
         title: "Release ${{ env.MRMAT_VERSION }}"
 
     - name: Conditional Deploy
-      uses: azure/webapps-deploy@v2
+      uses: azure/webapps-deploy@v3
       #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-webapp
       with:
