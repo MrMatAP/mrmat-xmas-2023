@@ -81,7 +81,7 @@ jobs:
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
         #PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
-        cp ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
         zip -r deploy.zip .
 
@@ -104,11 +104,12 @@ jobs:
         title: "Release ${{ env.MRMAT_VERSION }}"
 
     - name: Conditional Deploy
-      uses: azure/webapps-deploy@v2
+      uses: azure/webapps-deploy@v3
       if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-webapp
       with:
-        app-name: 'mrmat-xmas-2023-webapp'
-        slot-name: 'Production'
+        app-name: mrmat-xmas
         publish-profile: ${{ secrets.PublishProfile }}
         package: 'dist/deploy.zip'
+        type: ZIP
+        clean: true
