@@ -23,3 +23,14 @@ Having my opinions clash with Microsoft's means I have to tweak their system as 
   This is a shell script that executes uvicorn rather than their standard gunicorn.
 
 We then take a zip of the `dist` directory (without the directory itself) and deploy that to Azure.
+
+## Technical Notes
+
+### Serving front- and backend from a single app
+
+The 'spa-singleserve' tag shows how to serve the SPA straight from the backend app. There are a number of difficulties
+with that:
+
+* If the SPA uses HTML5 history mode for its router, then a fallback route must be defined in the backend that must serve the SPA when no static files or API is found for an given URI.
+* There are some issues when part of your application is using our very own 'code authentication' crutch and some parts do proper AAD. Redirects need to be carefully handled so they don't pass to the backend (see issue above) and we never solved configuration of the MSAL library to redirect its code properly.
+* Reverting to loginPopup rather than redirects didn't solve the proplem
