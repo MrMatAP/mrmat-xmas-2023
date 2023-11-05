@@ -1,39 +1,42 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import {ref, computed, onMounted} from "vue";
 import { store } from '../store.ts'
+import { xmas_backend_client } from "../xmas_backend_client.ts";
 
 const pictureURL = computed( () => {
-  //if(store.identity.hasPicture) return store.identity.pictureURL
+  if(store.identity.hasPicture) return store.identity.pictureURL
   return '/tap-to-update.png'
 })
-
+const userPicture = ref()
+const pictureIsLoading = ref(true)
 const fileSelector = ref()
 
-function onUploadFile() {
-  console.log('Uploading file')
-  const localImage = fileSelector.value.files[0]
-  console.dir(localImage)
-}
-
-function onUpdatePicture(e: Event) {
-  e.preventDefault()
-  console.log('Updating picture')
-  if(! store.identity.hasPicture) {
-    fileSelector.value.click()
+onMounted(async () => {
+  if(store.identity.hasPicture) {
+    pictureIsLoading.value = true
+    userPicture.value.src = xmas_backend_client.userPicture(store.identity.code)
+    userPicture.value.onload = () => { pictureIsLoading.value = false }
   }
-}
-
-function onSelectPicture(e: Event) {
-  e.preventDefault()
-  console.log('Selecting picture')
-}
+})
 
 function onRemovePicture() {
   console.log('Removing picture')
+  xmas_backend_client.removeUserPicture()
 }
 
-function onSend(e: Event) {
-  e.preventDefault()
+function onPictureSelected() {
+  console.log('Picture was selected')
+  const localImage = fileSelector.value.files[0]
+  pictureIsLoading.value = true
+  xmas_backend_client.postUserPicture(localImage)
+      .then( () => {
+        console.log('Image uploaded')
+        userPicture.value.src = xmas_backend_client.userPicture(store.identity.code)
+        userPicture.value.onload = () => { pictureIsLoading.value = false }
+      })
+}
+
+function onSend() {
   console.log('Sending message')
 }
 </script>
@@ -63,19 +66,23 @@ function onSend(e: Event) {
   <p>
     Whatever you do, take a picture of yourself and the result and upload it here (it will only be shared with me alone).
   </p>
-  <form id="message">
-    <h2>Send me a message</h2>
-    <div class="centered">
-      <img :src="pictureURL" alt="Your picture" @click.prevent="onUpdatePicture">
+  <div class="feedback">
+    <div class="picture">
+      <div class="loading" v-show="pictureIsLoading"/>
+      <img ref="userPicture" alt="Your picture" v-show="store.identity.hasPicture">
     </div>
-    <p style="white-space: pre-line;">{{ store.identity.userMessage }}</p>
-    <textarea v-bind="store.identity.userMessage" placeholder="Your message"></textarea>
-    <a href="#" @click.prevent="onSelectPicture" v-show="! store.identity.hasPicture">Upload an image</a>
-    <a href="#" @click.prevent="onRemovePicture" v-show="store.identity.hasPicture">Remove the image</a>
-
-    <input ref="fileSelector" type="file" @change.prevent="onUploadFile" style="display: none"/>
-    <input type="submit" value="Send" @click.prevent="onSend"/>
-  </form>
+    <div class="form">
+      <div class="message">
+        <textarea v-bind="store.identity.userMessage" placeholder="Your message"></textarea>
+      </div>
+      <div class="operations">
+        <input ref="fileSelector" type="file" @change.prevent="onPictureSelected" style="display: none"/>
+        <input type="button" value="Send" @click.prevent="onSend"/>
+        <input type="button" value="Update picture" @click.prevent="fileSelector.value.click()" v-show="store.identity.hasPicture"/>
+        <input type="button" value="Remove picture" @click.prevent="onRemovePicture"/>
+      </div>
+    </div>
+  </div>
 </article>
 </template>
 
@@ -85,11 +92,37 @@ article {
   order: 2;
   text-align: left;
 }
-article img {
-  max-width: 50vw;
-}
+
 .centered {
   text-align: center;
+}
+
+.feedback {
+  text-align: center;
+}
+
+.feedback .picture {
+  max-width: 500px;
+  max-height: 500px;
+}
+
+.feedback .picture img {
+  max-width: 100%;
+}
+
+.feedback .form {
+  display: flex;
+  flex-direction: column;
+}
+.feedback .form .message {
+  max-width: 50%;
+}
+.feedback .form .operations {
+  max-width: 50%;
+}
+
+label {
+  padding: 12px 12px 12px 0;
 }
 
 input[type=text], select, textarea {
@@ -98,14 +131,10 @@ input[type=text], select, textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  resize: vertical;
+  resize: none;
 }
 
-label {
-  padding: 12px 12px 12px 0;
-}
-
-input[type=submit] {
+input[type=button] {
   background-color: #04AA6d;
   color: white;
   padding: 12px 20px;
@@ -115,8 +144,17 @@ input[type=submit] {
   float: right;
 }
 
-form img {
-  width: 1080px;
-  cursor: grab;
+.placeholder {
+  border: 16px solid var(--xmas-dark-olive);
+  border-top: 16px solid var(--xmas-dark-green);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

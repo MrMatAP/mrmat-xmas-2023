@@ -14,13 +14,13 @@ export class Identity {
     }
 
     static fromJSON(data: any): Identity {
-        const identity = new Identity(data.code)
+        const identity = new Identity(data.id)
         identity.name = data.name
         identity.greeting = data.greeting
         identity.language = data.language
         identity.userMessage = data.userMessage
         identity.hasPicture = data.hasPicture
-        identity.pictureURL = data.pictureURL
+        identity.pictureURL = 'https://mrmat-xmas-api.azurewebsites.net/api/users/' + data.id + '/picture'
         return identity
     }
 }

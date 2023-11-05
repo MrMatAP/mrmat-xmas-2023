@@ -29,7 +29,7 @@ class CodeAuthentication {
 
     private async authenticateFromCode(code: string): Promise<Identity> {
         console.log('Authenticating code ' + code)
-        return await fetch('/api/users/' + code)
+        return await fetch('https://mrmat-xmas-api.azurewebsites.net/api/users/' + code)
             .then(r => {
                 if(r.status === 404) throw Error('resourceNotFound')
                 return r.json()
