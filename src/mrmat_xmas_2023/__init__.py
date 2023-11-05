@@ -42,10 +42,9 @@ app = fastapi.FastAPI(
 # if config.backend_cors_origins:
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
-    # allow_origins=[str(origin) for origin in config.backend_cors_origins],
     allow_origins=['https://mrmat-xmas.azurewebsites.net', 'http://localhost:8000', 'http://localhost:5173'],
     allow_credentials=True,
-    allow_methods=['*'],
+    allow_methods=['*', 'DELETE'],
     allow_headers=['*'])
 azure_scheme = fastapi_azure_auth.SingleTenantAzureAuthorizationCodeBearer(
     app_client_id=config.backend_client_id,
@@ -101,15 +100,40 @@ async def get_user_picture(user_id: str):
 
 @app.post('/api/users/{user_id:str}/picture', response_model=StatusResponse)
 async def post_user_picture(user_id: str, file: fastapi.UploadFile):
-    if file.content_type not in __content_type_map__.keys():
-        raise XmasException(code=400, msg='You must upload a jpeg or png image')
+    try:
+        if file.content_type not in __content_type_map__.keys():
+            raise XmasException(code=400, msg='You must upload a jpeg or png image')
+        user = await assert_user(user_id)
+        with container_client.get_blob_client(blob=user.id) as blob_client:
+            content = file.file.read()
+            blob_client.upload_blob(data=content,
+                                    overwrite=True,
+                                    content_settings=azure.storage.blob.ContentSettings(content_type=file.content_type))
+        user.hasPicture = True
+        xmas_cosmos_client.upsert_item(user)
+        return StatusResponse(code=200, msg='Picture successfully uploaded')
+    except azure.cosmos.exceptions.CosmosHttpResponseError:
+        return StatusResponse(code=400, msg='An error occurred while uploading your picture')
+
+
+@app.post('/api/users/{user_id:str}', response_model=StatusResponse)
+async def update_user(user_id: str, update: User):
+    try:
+        user = await assert_user(user_id)
+        user.userMessage = update.userMessage
+        xmas_cosmos_client.upsert_item(user)
+        return StatusResponse(code=200, msg='User successfully updated')
+    except azure.cosmos.exceptions.CosmosHttpResponseError:
+        return StatusResponse(code=500, msg='An error occurred while updating your user')
+
+
+@app.delete('/api/users/{user_id:str}/picture', response_model=StatusResponse)
+async def remove_user_picture(user_id: str):
     user = await assert_user(user_id)
-    with container_client.get_blob_client(blob=user.id) as blob_client:
-        content = file.file.read()
-        blob_client.upload_blob(data=content,
-                                overwrite=True,
-                                content_settings=azure.storage.blob.ContentSettings(content_type=file.content_type))
-    return StatusResponse(code=200, msg='Picture successfully uploaded')
+    with container_client.get_blob_client(blob=user.id) as blob_blient:
+        blob_blient.delete_blob()
+
+    return StatusResponse(code=200, msg='Picture successfully removed')
 
 
 @app.get('/api/users',
