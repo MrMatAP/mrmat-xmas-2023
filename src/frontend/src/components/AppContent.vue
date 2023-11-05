@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {ref, computed, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 import { store } from '../store.ts'
 import { xmas_backend_client } from "../xmas_backend_client.ts";
 
-const pictureURL = computed( () => {
-  if(store.identity.hasPicture) return store.identity.pictureURL
-  return '/tap-to-update.png'
-})
+// const pictureURL = computed( () => {
+//   if(store.identity.hasPicture) return store.identity.pictureURL
+//   return '/tap-to-update.png'
+// })
 const userPicture = ref()
 const pictureIsLoading = ref(true)
 const fileSelector = ref()
