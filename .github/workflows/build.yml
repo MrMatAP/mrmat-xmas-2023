@@ -77,6 +77,7 @@ jobs:
         npm install
         npm run build
         cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/frontend/* ${GITHUB_WORKSPACE}/src/frontend/dist/
+        cd ${GITHUB_WORKSPACE}/src/frontend/dist/
         zip -r frontend.zip .
         cd ${GITHUB_WORKSPACE}/
         pip install --user -r dev-requirements.txt
