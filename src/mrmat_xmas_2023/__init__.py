@@ -43,7 +43,7 @@ app = fastapi.FastAPI(
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
     # allow_origins=[str(origin) for origin in config.backend_cors_origins],
-    allow_origins=['https://mrmat-xmas.azurewebsites.net', 'http://localhost:8000', 'http://localhost:5731'],
+    allow_origins=['https://mrmat-xmas.azurewebsites.net', 'http://localhost:8000', 'http://localhost:5173'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'])
