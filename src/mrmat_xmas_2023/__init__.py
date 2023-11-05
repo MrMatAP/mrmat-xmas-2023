@@ -1,11 +1,9 @@
-import os
 import pathlib
 import importlib.metadata
 import typing
 
 import fastapi
 import fastapi.middleware.cors
-import fastapi.staticfiles
 import fastapi_azure_auth.user
 import azure.identity
 import azure.cosmos
@@ -139,28 +137,6 @@ async def admin_create_user(user: User):
 @app.get('/api/healthz')
 async def healthz():
     return {'status': 'OK', 'version': __version__}
-
-
-class SPAStaticFilesWithFallback(fastapi.staticfiles.StaticFiles):
-    """
-    An override for static files to fall back to the index if the relative path has not been found.
-    This permits us to serve an SPA from a single webapp.
-    """
-
-    def __init__(self, directory: os.PathLike, index='index.html'):
-        self.index = index
-        super().__init__(directory=directory, html=True, check_dir=True)
-
-    def lookup_path(self, path: str) -> typing.Tuple[str, typing.Optional[os.stat_result]]:
-        full_path, stat_result = super().lookup_path(path)
-        if not stat_result:
-            return super().lookup_path(self.index)
-        return full_path, stat_result
-
-
-app.mount(path='/',
-          app=SPAStaticFilesWithFallback(directory=pathlib.Path(os.path.dirname(__file__), 'static')),
-          name='static')
 
 
 async def assert_user(code: str) -> User:
