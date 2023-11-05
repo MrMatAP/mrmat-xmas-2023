@@ -110,6 +110,6 @@ jobs:
       with:
         app-name: mrmat-xmas-api
         publish-profile: ${{ secrets.publishprofile_api }}
-        package: ${{ GITHUB_WORKSPACE }}/dist/api.zip
+        package: dist/api.zip
         type: ZIP
         clean: true
