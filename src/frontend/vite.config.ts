@@ -11,7 +11,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    outDir: '../mrmat_xmas_2023/static',
+    // outDir: '../mrmat_xmas_2023/static',
     emptyOutDir: true
   }
 })

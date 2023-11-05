@@ -75,7 +75,9 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
-        npm run package
+        npm run build
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/frontend/* ${GITHUB_WORKSPACE}/src/frontend/dist/
+        zip -r frontend.zip .
         cd ${GITHUB_WORKSPACE}/
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
@@ -111,5 +113,16 @@ jobs:
         app-name: mrmat-xmas-api
         publish-profile: ${{ secrets.publishprofile_api }}
         package: dist/api.zip
+        type: ZIP
+        clean: true
+
+    - name: Conditional Deploy (Frontend)
+      uses: azure/webapps-deploy@v3
+      #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
+      id: deploy-to-frontend
+      with:
+        app-name: mrmat-xmas
+        publish-profile: ${{ secrets.publishprofile_frontend }}
+        package: dist/frontend.zip
         type: ZIP
         clean: true
