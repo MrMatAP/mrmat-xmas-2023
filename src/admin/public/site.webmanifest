@@ -1,6 +1,6 @@
 {
-  "name": "MrMat :: Xmas",
-  "short_name": "mrmat-xmas",
+  "name": "MrMat :: Xmas :: Admin",
+  "short_name": "mrmat-xmas-admin",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

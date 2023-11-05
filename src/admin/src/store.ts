@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import { AccountInfo } from "@azure/msal-browser";
 
 export class Identity {
     readonly code: string
@@ -23,16 +24,26 @@ export class Identity {
         identity.pictureURL = data.pictureURL
         return identity
     }
+
+    static fromAAD(data: AccountInfo): Identity {
+        const identity = new Identity(data.localAccountId)
+        identity.name = data.name || 'AAD Person'
+        return identity
+    }
 }
 
 export const STRANGER = new Identity('-1')
 
 export const store = reactive({
     version: 'unknown',
+    isAADAuthenticated: false,
     appState: {
         isLoading: true,
         isError: false,
-        errorMessageId: 'unknown'
+        errorMessageId: 'unknown',
     },
-    identity: STRANGER
+    identity: STRANGER,
+    admin: {
+        identities: []
+    }
 })
