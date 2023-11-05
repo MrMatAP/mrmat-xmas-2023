@@ -6,7 +6,7 @@ import { store } from './store.js'
 import AppHeader from "./components/AppHeader.vue";
 
 onMounted(async () => {
-  fetch('https://mrmat-xmas-api/azurewebsites.net/api/healthz')
+  fetch('https://mrmat-xmas-api.azurewebsites.net/api/healthz')
       .then(r => {
         if(r.status === 404) throw Error('serverNotFound')
         return r.json()
