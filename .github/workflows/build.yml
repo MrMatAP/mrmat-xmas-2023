@@ -81,7 +81,7 @@ jobs:
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
         #PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
-        #cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/api/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
         zip -r api.zip .
 
