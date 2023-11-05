@@ -81,9 +81,9 @@ jobs:
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
         #PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
-        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
-        cd ${GITHUB_WORKSPACE}/dist
-        zip -r deploy.zip .
+        #cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
+        #cd ${GITHUB_WORKSPACE}/dist
+        zip -r api.zip .
 
     #- name: Upload test results
     #  uses: actions/upload-artifact@v2
@@ -103,13 +103,13 @@ jobs:
         prerelease: false
         title: "Release ${{ env.MRMAT_VERSION }}"
 
-    - name: Conditional Deploy
+    - name: Conditional Deploy (API)
       uses: azure/webapps-deploy@v3
-      if: (github.event.pull_request.merged == true && github.base_ref == 'main')
-      id: deploy-to-webapp
+      #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
+      id: deploy-to-api
       with:
-        app-name: mrmat-xmas
-        publish-profile: ${{ secrets.PublishProfile }}
-        package: 'dist/deploy.zip'
+        app-name: mrmat-xmas-api
+        publish-profile: ${{ secrets.publishprofile_api }}
+        package: 'dist/api.zip'
         type: ZIP
         clean: true
