@@ -27,6 +27,11 @@ class StatusResponse(pydantic.BaseModel):
     msg: str
 
 
+class HealthzResponse(pydantic.BaseModel):
+    status: str
+    version: str
+
+
 class XmasException(Exception):
     code: int = 500
     msg: str = 'An unknown error occurred'

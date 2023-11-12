@@ -11,7 +11,7 @@ import fastapi_azure_auth.user
 
 from .config import Config
 from .dependencies import AppIdentity, CosmosContainerClient, BlobContainerClient
-from .model import User, StatusResponse, XmasException
+from .model import User, StatusResponse, HealthzResponse, XmasException
 
 try:
     __version__ = importlib.metadata.version('mrmat-xmas-2023')
@@ -108,21 +108,21 @@ async def shutdown() -> None:
 @app.exception_handler(XmasException)
 async def xmas_exception_handler(request: fastapi.Request, exc: XmasException):
     return fastapi.responses.JSONResponse(status_code=exc.code,
-                                          content={'status': exc.code, 'msg': exc.msg})
+                                          content=StatusResponse(status=exc.code, msg=exc.msg).model_dump())
 
 
 @app.exception_handler(azure.cosmos.exceptions.CosmosHttpResponseError)
 async def cosmos_exception_handler(request: fastapi.Request, exc: azure.cosmos.exceptions.CosmosHttpResponseError):
     return fastapi.responses.JSONResponse(status_code=exc.status_code,
-                                          content={'status': exc.status_code, 'msg': exc.exc_msg})
+                                          content=StatusResponse(status=exc.status_code, msg=exc.exc_msg).model_dump())
 
 
 @app.get('/api/users',
          summary='Return a list of registered users for those with admin authorisation',
          response_model=typing.List[User])
 async def list_users(caller: typing.Annotated[fastapi_azure_auth.user.User, fastapi.Depends(validate_admin)]):
-    xmas_cosmos_client = cosmos_container_client()
-    results = xmas_cosmos_client.query_items(
+    cosmos_client = cosmos_container_client()
+    results = cosmos_client.query_items(
         query="SELECT * FROM xmas x WHERE x.year = @year",
         parameters=[{'name': '@year', 'value': 2023}],
         enable_cross_partition_query=True)
@@ -142,9 +142,9 @@ async def get_user(caller: typing.Annotated[User, fastapi.Depends(validate_user)
           response_model=User)
 async def create_user(user: User,
                       caller: typing.Annotated[fastapi_azure_auth.user.User, fastapi.Depends(validate_admin)]):
-    xmas_cosmos_client = cosmos_container_client()
+    cosmos_client = cosmos_container_client()
     user.id = None
-    created = xmas_cosmos_client.create_item(body=user.model_dump(), enable_automatic_id_generation=True)
+    created = cosmos_client.create_item(body=user.model_dump(), enable_automatic_id_generation=True)
     created_user = User.from_cosmos(created)
     return created_user
 
@@ -154,9 +154,9 @@ async def create_user(user: User,
          response_model=User)
 async def update_user(update: User,
                       caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
-    xmas_cosmos_client = cosmos_container_client()
+    cosmos_client = cosmos_container_client()
     caller.userMessage = update.userMessage
-    updated = xmas_cosmos_client.upsert_item(caller.model_dump())
+    updated = cosmos_client.upsert_item(caller.model_dump())
     return User.model_validate(updated)
 
 
@@ -164,8 +164,8 @@ async def update_user(update: User,
          summary='Return the users picture',
          response_class=fastapi.Response)
 async def get_user_picture(caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
-    xmas_blob_client = blob_container_client()
-    blob_client = xmas_blob_client.get_blob_client(blob=caller.id)
+    sto_client = blob_container_client()
+    blob_client = sto_client.get_blob_client(blob=caller.id)
     if not blob_client.exists():
         raise XmasException(code=404, msg='No user picture')
     media = blob_client.get_blob_properties().get('content_settings', {}).get('content_type')
@@ -180,17 +180,17 @@ async def get_user_picture(caller: typing.Annotated[User, fastapi.Depends(valida
           response_model=StatusResponse)
 async def post_user_picture(file: fastapi.UploadFile,
                             caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
-    xmas_container_client = blob_container_client()
-    xmas_cosmos_client = cosmos_container_client()
+    sto_client = blob_container_client()
+    cosmos_client = cosmos_container_client()
     if file.content_type not in __content_type_map__.keys():
         raise XmasException(code=400, msg='You must upload a jpeg or png image')
-    with xmas_container_client.get_blob_client(blob=caller.id) as blob_client:
+    with sto_client.get_blob_client(blob=caller.id) as blob_client:
         content = file.file.read()
         blob_client.upload_blob(data=content,
                                 overwrite=True,
                                 content_settings=azure.storage.blob.ContentSettings(content_type=file.content_type))
     caller.hasPicture = True
-    xmas_cosmos_client.upsert_item(caller.model_dump())
+    cosmos_client.upsert_item(caller.model_dump())
     return StatusResponse(code=200, msg='Picture successfully uploaded')
 
 
@@ -198,21 +198,23 @@ async def post_user_picture(file: fastapi.UploadFile,
             summary='Remove the users picture',
             response_model=StatusResponse)
 async def remove_user_picture(caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
-    xmas_container_client = blob_container_client()
-    xmas_cosmos_client = cosmos_container_client()
-    with xmas_container_client.get_blob_client(blob=caller.id) as blob_blient:
+    sto_client = blob_container_client()
+    cosmos_client = cosmos_container_client()
+    with sto_client.get_blob_client(blob=caller.id) as blob_blient:
         blob_blient.delete_blob()
     caller.hasPicture = False
-    xmas_cosmos_client.upsert_item(caller.model_dump())
+    cosmos_client.upsert_item(caller.model_dump())
     return StatusResponse(code=200, msg='Picture successfully removed')
 
 
 @app.delete('/api/users/{code:str}', summary='Remove a user')
 async def remove_user(caller: typing.Annotated[fastapi_azure_auth.user.User, fastapi.Depends(validate_admin)]):
-    xmas_cosmos_client = cosmos_container_client()
-    xmas_cosmos_client.delete_item(item=caller.id, partition_key=caller.id)
+    cosmos_client = cosmos_container_client()
+    cosmos_client.delete_item(item=caller.id, partition_key=caller.id)
 
 
-@app.get('/api/healthz', summary='Return health information')
+@app.get('/api/healthz',
+         summary='Return health information',
+         response_model=HealthzResponse)
 async def healthz():
-    return {'status': 'OK', 'version': __version__}
+    return HealthzResponse(status='OK', version=__version__)
