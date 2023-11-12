@@ -46,6 +46,8 @@ class Config:
     backend_client_id: str = dataclasses.field(default=os.getenv('AZURE_CLIENT_ID'))
     backend_client_secret: str = dataclasses.field(default=os.getenv('AZURE_CLIENT_SECRET'))
     openapi_client_id: str = dataclasses.field(default=os.getenv('OPENAPI_CLIENT_ID'))
+    testclient_client_id: str = dataclasses.field(default=os.getenv('TESTCLIENT_CLIENT_ID'))
+    testclient_client_secret: str = dataclasses.field(default=os.getenv('TESTCLIENT_CLIENT_SECRET'))
     tenant_id: str = dataclasses.field(default=os.getenv('AZURE_TENANT_ID'))
     cosmos_endpoint: str = dataclasses.field(default=os.getenv('COSMOS_ENDPOINT'))
     cosmos_key: str = dataclasses.field(default=os.getenv('COSMOS_KEY'))

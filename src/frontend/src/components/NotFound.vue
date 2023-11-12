@@ -1,10 +1,11 @@
 <script setup lang="ts">
-
+import { store } from '../store.ts'
 </script>
 
 <template>
 <article>
-  Not found
+  I clearly know who you are, {{ store.identity.name }} but you're trying to navigate to a place that doesn't exist.
+  Go elsewhere.
 </article>
 </template>
 

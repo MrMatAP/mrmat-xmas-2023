@@ -1,19 +1,19 @@
 import os
-import pathlib
-import importlib.metadata
 import typing
+import importlib.metadata
+import pathlib
 
-import fastapi
-import fastapi.middleware.cors
-import fastapi.staticfiles
-import fastapi_azure_auth.user
-import azure.identity
 import azure.cosmos
 import azure.cosmos.exceptions
-import azure.storage.blob
+import azure.storage
+import fastapi
+import fastapi.staticfiles
+import fastapi.middleware.cors
+import fastapi_azure_auth.user
 
 from .config import Config
-from .model import User, StatusResponse, XmasException
+from .dependencies import AppIdentity, CosmosContainerClient, BlobContainerClient
+from .model import User, StatusResponse, HealthzResponse, XmasException
 
 try:
     __version__ = importlib.metadata.version('mrmat-xmas-2023')
@@ -26,29 +26,11 @@ __content_type_map__ = {
     'image/png': 'png',
 }
 
+VERSION_HEADER = 'X-Version'
 config = Config(__config_file__)
-app_credential = azure.identity.DefaultAzureCredential()
-cosmos_client = azure.cosmos.CosmosClient(url=config.cosmos_endpoint, credential=app_credential)
-xmas_cosmos_client = cosmos_client.get_database_client(config.cosmos_db).get_container_client(config.cosmos_container)
-container_client = azure.storage.blob.ContainerClient(account_url=config.container_endpoint,
-                                                      container_name=config.container_name,
-                                                      credential=app_credential)
-
-app = fastapi.FastAPI(
-    swagger_ui_oauth2_redirect_url='/oauth2-redirect',
-    swagger_ui_init_oauth={
-        'usePkceWithAuthorizationCodeGrant': True,
-        'clientId': config.openapi_client_id
-    }
-)
-# if config.backend_cors_origins:
-app.add_middleware(
-    fastapi.middleware.cors.CORSMiddleware,
-    # allow_origins=[str(origin) for origin in config.backend_cors_origins],
-    allow_origins=['http://localhost:8000'],
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'])
+app_identity = AppIdentity()
+cosmos_container_client = CosmosContainerClient(config, app_identity)
+blob_container_client = BlobContainerClient(config, app_identity)
 azure_scheme = fastapi_azure_auth.SingleTenantAzureAuthorizationCodeBearer(
     app_client_id=config.backend_client_id,
     tenant_id=config.tenant_id,
@@ -60,6 +42,60 @@ azure_scheme = fastapi_azure_auth.SingleTenantAzureAuthorizationCodeBearer(
 )
 
 
+def validate_admin(user: fastapi_azure_auth.user.User = fastapi.Depends(azure_scheme)) -> fastapi_azure_auth.user.User:
+    """
+    Validate whether an authenticated user either has the admin scope set or the Test.Admin role
+    Args:
+        user: The authenticated user object
+    Raises:
+        InvalidAuth when unauthorised
+    """
+    if 'Test.Admin' in user.roles or 'admin' in user.scp:
+        return user
+    raise fastapi_azure_auth.auth.InvalidAuth('User lacks admin permissions')
+
+
+def validate_user(code: str) -> User:
+    """
+    Validate whether a code-authenticated user exists and return it
+    Args:
+        code: The user code provided
+
+    Returns:
+        A user object
+    """
+    try:
+        xmas_container_client = cosmos_container_client()
+        user = xmas_container_client.read_item(item=code, partition_key=code)
+        return User.from_cosmos(user)
+    except azure.cosmos.exceptions.CosmosHttpResponseError:
+        raise XmasException(code=401, msg='Hello Stranger')
+
+
+app = fastapi.FastAPI(
+    swagger_ui_oauth2_redirect_url='/oauth2-redirect',
+    swagger_ui_init_oauth={
+        'usePkceWithAuthorizationCodeGrant': True,
+        'clientId': config.openapi_client_id
+    }
+)
+
+# if config.backend_cors_origins:
+app.add_middleware(
+    fastapi.middleware.cors.CORSMiddleware,
+    allow_origins=['https://mrmat-xmas.azurewebsites.net', 'http://localhost:8000', 'http://localhost:5173'],
+    allow_credentials=True,
+    allow_methods=['*', 'DELETE'],
+    allow_headers=['*'])
+
+
+@app.middleware('common-headers')
+async def add_common_headers(request: fastapi.Request, call_next):
+    response = await call_next(request)
+    response.headers[VERSION_HEADER] = __version__
+    return response
+
+
 @app.on_event('startup')
 async def startup() -> None:
     await azure_scheme.openid_config.load_config()
@@ -67,31 +103,77 @@ async def startup() -> None:
 
 @app.on_event('shutdown')
 async def shutdown() -> None:
-    if container_client:
-        container_client.close()
+    blob_container_client.close()
+    app_identity.close()
 
 
 @app.exception_handler(XmasException)
 async def xmas_exception_handler(request: fastapi.Request, exc: XmasException):
     return fastapi.responses.JSONResponse(status_code=exc.code,
-                                          content={'msg': exc.msg},
-                                          headers={'Xmas-Version': __version__})
+                                          content=StatusResponse(status=exc.code, msg=exc.msg).model_dump())
 
 
-@app.get('/api/users/{user_id:str}', response_model=User)
-async def get_user(user_id: str) -> User:
-    try:
-        entry = xmas_cosmos_client.read_item(item=user_id, partition_key=user_id)
-        user = model.User.from_cosmos(entry)
-    except azure.cosmos.exceptions.CosmosHttpResponseError:
-        user = model.User(id='0', name='Stranger', greeting='Happy Holidays')
-    return user
+@app.exception_handler(azure.cosmos.exceptions.CosmosHttpResponseError)
+async def cosmos_exception_handler(request: fastapi.Request, exc: azure.cosmos.exceptions.CosmosHttpResponseError):
+    return fastapi.responses.JSONResponse(status_code=exc.status_code,
+                                          content=StatusResponse(status=exc.status_code, msg=exc.exc_msg).model_dump())
 
 
-@app.get('/api/users/{user_id:str}/picture', response_class=fastapi.Response)
-async def get_user_picture(user_id: str):
-    user = await assert_user(user_id)
-    blob_client = container_client.get_blob_client(blob=user.id)
+@app.exception_handler(fastapi.exceptions.RequestValidationError)
+async def validation_exception_handler(request: fastapi.Request, exc: fastapi.exceptions.RequestValidationError):
+    return fastapi.responses.JSONResponse(status_code=422,
+                                          content=StatusResponse(status=422, msg=exc.errors()).model_dump())
+
+
+@app.get('/api/users',
+         summary='Return a list of registered users for those with admin authorisation',
+         response_model=typing.List[User])
+async def list_users(caller: typing.Annotated[fastapi_azure_auth.user.User, fastapi.Depends(validate_admin)]):
+    cosmos_client = cosmos_container_client()
+    results = cosmos_client.query_items(
+        query="SELECT * FROM xmas x WHERE x.year = @year",
+        parameters=[{'name': '@year', 'value': 2023}],
+        enable_cross_partition_query=True)
+    users = [User.from_cosmos(entry) for entry in results]
+    return users
+
+
+@app.get('/api/users/{code:str}',
+         summary='Return user information for a given code',
+         response_model=User)
+async def get_user(caller: typing.Annotated[User, fastapi.Depends(validate_user)]) -> User:
+    return caller
+
+
+@app.post('/api/users',
+          summary='Create a user',
+          response_model=User)
+async def create_user(user: User,
+                      caller: typing.Annotated[fastapi_azure_auth.user.User, fastapi.Depends(validate_admin)]):
+    cosmos_client = cosmos_container_client()
+    user.id = None
+    created = cosmos_client.create_item(body=user.model_dump(), enable_automatic_id_generation=True)
+    created_user = User.from_cosmos(created)
+    return created_user
+
+
+@app.put('/api/users/{code:str}',
+         summary='Update a user',
+         response_model=User)
+async def update_user(update: User,
+                      caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
+    cosmos_client = cosmos_container_client()
+    caller.userMessage = update.userMessage
+    updated = cosmos_client.upsert_item(caller.model_dump())
+    return User.model_validate(updated)
+
+
+@app.get('/api/users/{code:str}/picture',
+         summary='Return the users picture',
+         response_class=fastapi.Response)
+async def get_user_picture(caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
+    sto_client = blob_container_client()
+    blob_client = sto_client.get_blob_client(blob=caller.id)
     if not blob_client.exists():
         raise XmasException(code=404, msg='No user picture')
     media = blob_client.get_blob_properties().get('content_settings', {}).get('content_type')
@@ -101,80 +183,51 @@ async def get_user_picture(user_id: str):
     return fastapi.Response(content=content, media_type=media)
 
 
-@app.post('/api/users/{user_id:str}/picture', response_model=StatusResponse)
-async def post_user_picture(user_id: str, file: fastapi.UploadFile):
+@app.post('/api/users/{code:str}/picture',
+          summary='Upload the users picture',
+          response_model=StatusResponse)
+async def post_user_picture(caller: typing.Annotated[User, fastapi.Depends(validate_user)],
+                            file: typing.Annotated[fastapi.UploadFile, fastapi.File(description='User picture')]):
+    sto_client = blob_container_client()
+    cosmos_client = cosmos_container_client()
     if file.content_type not in __content_type_map__.keys():
         raise XmasException(code=400, msg='You must upload a jpeg or png image')
-    user = await assert_user(user_id)
-    with container_client.get_blob_client(blob=user.id) as blob_client:
+    with sto_client.get_blob_client(blob=caller.id) as blob_client:
         content = file.file.read()
         blob_client.upload_blob(data=content,
                                 overwrite=True,
                                 content_settings=azure.storage.blob.ContentSettings(content_type=file.content_type))
-    return StatusResponse(code=200, msg='Picture successfully uploaded')
+    caller.hasPicture = True
+    cosmos_client.upsert_item(caller.model_dump())
+    return StatusResponse(status=200, msg='Picture successfully uploaded')
 
 
-@app.get('/api/users',
-         response_model=typing.List[User],
-         dependencies=[fastapi.Security(azure_scheme, scopes=['admin'])])
-async def admin_list_users():
-    results = xmas_cosmos_client.query_items(
-        query="SELECT x.id, x.name, x.greeting, x.language FROM xmas x WHERE x.year = @year",
-        parameters=[{'name': '@year', 'value': 2023}],
-        enable_cross_partition_query=True)
-    users = [User.from_cosmos(entry) for entry in results]
-    return users
+@app.delete('/api/users/{code:str}/picture',
+            summary='Remove the users picture',
+            response_model=StatusResponse)
+async def remove_user_picture(caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
+    sto_client = blob_container_client()
+    cosmos_client = cosmos_container_client()
+    with sto_client.get_blob_client(blob=caller.id) as blob_blient:
+        if blob_blient.exists():
+            blob_blient.delete_blob(delete_snapshots='include')
+    caller.hasPicture = False
+    cosmos_client.upsert_item(caller.model_dump())
+    return StatusResponse(status=200, msg='Picture successfully removed')
 
 
-@app.post('/api/users',
-          response_model=User,
-          dependencies=[fastapi.Security(azure_scheme, scopes=['admin'])])
-async def admin_create_user(user: User):
-    user.id = None
-    created = xmas_cosmos_client.create_item(body=user.model_dump(), enable_automatic_id_generation=True)
-    created_user = User.from_cosmos(created)
-    return created_user
+@app.delete('/api/users/{code:str}', summary='Remove a user')
+async def remove_user(caller: typing.Annotated[fastapi_azure_auth.user.User, fastapi.Depends(validate_admin)]):
+    cosmos_client = cosmos_container_client()
+    cosmos_client.delete_item(item=caller.id, partition_key=caller.id)
 
 
-@app.get('/api/healthz')
+@app.get('/api/healthz',
+         summary='Return health information',
+         response_model=HealthzResponse)
 async def healthz():
-    return {'status': 'OK', 'version': __version__}
+    return HealthzResponse(status='OK', version=__version__)
 
-
-class SPAStaticFilesWithFallback(fastapi.staticfiles.StaticFiles):
-    """
-    An override for static files to fall back to the index if the relative path has not been found.
-    This permits us to serve an SPA from a single webapp.
-    """
-
-    def __init__(self, directory: os.PathLike, index='index.html'):
-        self.index = index
-        super().__init__(directory=directory, html=True, check_dir=True)
-
-    def lookup_path(self, path: str) -> typing.Tuple[str, typing.Optional[os.stat_result]]:
-        full_path, stat_result = super().lookup_path(path)
-        if not stat_result:
-            return super().lookup_path(self.index)
-        return full_path, stat_result
-
-
-app.mount(path='/',
-          app=SPAStaticFilesWithFallback(directory=pathlib.Path(os.path.dirname(__file__), 'static')),
+app.mount('/',
+          fastapi.staticfiles.StaticFiles(directory=os.path.join(os.path.dirname(__file__), 'static'), html=True),
           name='static')
-
-
-async def assert_user(code: str) -> User:
-    """
-    Utility to assert whether we know a user coming along with code authentication
-    Args:
-        code: Code we know the user with
-
-    Returns:
-        A User data structure
-    Raises:
-        XmasException when the user is not known
-    """
-    user = await get_user(code)
-    if user.id == 0:
-        raise XmasException(code=401, msg="I'm afraid I don't know you. Happy holidays anyway")
-    return user

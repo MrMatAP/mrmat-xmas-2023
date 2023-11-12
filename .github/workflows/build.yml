@@ -72,6 +72,20 @@ jobs:
         key: ${{ runner.os }}
 
     - name: Build
+      env:
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
+        TESTCLIENT_CLIENT_ID: ${{ secrets.TESTCLIENT_CLIENT_ID }}
+        TESTCLIENT_CLIENT_SECRET: ${{ secrets.TESTCLIENT_CLIENT_SECRET }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        COSMOS_ENDPOINT: ${{ secrets.COSMOS_ENDPOINT }}
+        COSMOS_KEY: ${{ secrets.COSMOS_KEY }}
+        COSMOS_DB: ${{ secrets.COSMOS_DB }}
+        COSMOS_CONTAINER: ${{ secrets.COSMOS_CONTAINER }}
+        CONTAINER_ENDPOINT: ${{ secrets.CONTAINER_ENDPOINT }}
+        CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
+        CONTAINER_DIRECTORY: ${{ secrets.CONTAINER_DIRECTORY }}
       run: |
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
@@ -80,19 +94,19 @@ jobs:
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
-        #PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
-        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/* ${GITHUB_WORKSPACE}/dist/
+        PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/api/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
-        zip -r deploy.zip .
+        zip -r ${GITHUB_WORKSPACE}/backend.zip .
 
-    #- name: Upload test results
-    #  uses: actions/upload-artifact@v2
-    #  if: ${{ always() }}
-    #  with:
-    #    name: Test and Coverage
-    #    path: |
-    #      build/junit.xml
-    #      build/coverage.xml
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: Test and Coverage
+        path: |
+          build/junit.xml
+          build/coverage.xml
 
     - name: Conditional Release
       uses: marvinpinto/action-automatic-releases@latest
@@ -106,10 +120,10 @@ jobs:
     - name: Conditional Deploy
       uses: azure/webapps-deploy@v3
       if: (github.event.pull_request.merged == true && github.base_ref == 'main')
-      id: deploy-to-webapp
+      id: deploy-to-api
       with:
-        app-name: mrmat-xmas
-        publish-profile: ${{ secrets.PublishProfile }}
-        package: 'dist/deploy.zip'
+        app-name: mrmat-xmas-api
+        publish-profile: ${{ secrets.publishprofile_api }}
+        package: backend.zip
         type: ZIP
         clean: true

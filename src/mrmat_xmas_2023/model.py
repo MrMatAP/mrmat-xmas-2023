@@ -9,6 +9,7 @@ class User(pydantic.BaseModel):
     language: str = 'en'
     hasPicture: bool = False
     userMessage: str = ''
+    year: int = 2023
 
     @staticmethod
     def from_cosmos(entry: typing.Dict):
@@ -17,12 +18,18 @@ class User(pydantic.BaseModel):
                     greeting=entry.get('greeting'),
                     language=entry.get('language'),
                     hasPicture=entry.get('hasPicture'),
-                    userMessage=entry.get('userMessage'))
+                    userMessage=entry.get('userMessage'),
+                    year=entry.get('year'))
 
 
 class StatusResponse(pydantic.BaseModel):
     status: int
     msg: str
+
+
+class HealthzResponse(pydantic.BaseModel):
+    status: str
+    version: str
 
 
 class XmasException(Exception):
