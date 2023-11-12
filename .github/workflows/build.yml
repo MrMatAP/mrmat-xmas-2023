@@ -83,6 +83,8 @@ jobs:
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
+        env | sort -u
+        echo $COSMOS_ENDPOINT
         #PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
         cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/api/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
