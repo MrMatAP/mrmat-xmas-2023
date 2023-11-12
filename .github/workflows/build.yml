@@ -72,21 +72,6 @@ jobs:
         key: ${{ runner.os }}
 
     - name: Build
-      with:
-        env:
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
-          TESTCLIENT_CLIENT_ID: ${{ secrets.TESTCLIENT_CLIENT_ID }}
-          TESTCLIENT_CLIENT_SECRET: ${{ secrets.TESTCLIENT_CLIENT_SECRET }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          COSMOS_ENDPOINT: ${{ secrets.COSMOS_ENDPOINT }}
-          COSMOS_KEY: ${{ secrets.COSMOS_KEY }}
-          COSMOS_DB: ${{ secrets.COSMOS_DB }}
-          COSMOS_CONTAINER: ${{ secrets.COSMOS_CONTAINER }}
-          CONTAINER_ENDPOINT: ${{ secrets.CONTAINER_ENDPOINT }}
-          CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
-          CONTAINER_DIRECTORY: ${{ secrets.CONTAINER_DIRECTORY }}
       run: |
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
@@ -102,6 +87,21 @@ jobs:
         cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/api/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
         zip -r ${GITHUB_WORKSPACE}/api.zip .
+      with:
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
+          TESTCLIENT_CLIENT_ID: ${{ secrets.TESTCLIENT_CLIENT_ID }}
+          TESTCLIENT_CLIENT_SECRET: ${{ secrets.TESTCLIENT_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          COSMOS_ENDPOINT: ${{ secrets.COSMOS_ENDPOINT }}
+          COSMOS_KEY: ${{ secrets.COSMOS_KEY }}
+          COSMOS_DB: ${{ secrets.COSMOS_DB }}
+          COSMOS_CONTAINER: ${{ secrets.COSMOS_CONTAINER }}
+          CONTAINER_ENDPOINT: ${{ secrets.CONTAINER_ENDPOINT }}
+          CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
+          CONTAINER_DIRECTORY: ${{ secrets.CONTAINER_DIRECTORY }}
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
