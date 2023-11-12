@@ -2,8 +2,8 @@
 import { onMounted, computed, ref, } from 'vue'
 
 const props = defineProps<{
-  imageUrl: String
-  hasImage: Boolean
+  imageUrl: string
+  hasImage: boolean
 }>()
 
 const loading = ref(true)
