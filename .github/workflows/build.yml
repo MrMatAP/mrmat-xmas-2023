@@ -108,7 +108,7 @@ jobs:
 
     - name: Conditional Deploy (API)
       uses: azure/webapps-deploy@v3
-      #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
+      if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-api
       with:
         app-name: mrmat-xmas-api
@@ -119,7 +119,7 @@ jobs:
 
     - name: Conditional Deploy (Frontend)
       uses: azure/webapps-deploy@v3
-      #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
+      if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-frontend
       with:
         app-name: mrmat-xmas
