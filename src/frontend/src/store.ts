@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 
 export class Identity {
-    readonly code: string
+    readonly id: string
     name: string = 'Stranger'
     greeting: string = 'Happy Holidays'
     language: string = 'en'
@@ -10,7 +10,7 @@ export class Identity {
     pictureURL: string = '/tap-to-update.png'
 
     constructor(code: string) {
-        this.code = code
+        this.id = code
     }
 
     static fromJSON(data: any): Identity {

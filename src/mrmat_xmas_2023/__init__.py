@@ -1,3 +1,4 @@
+import os
 import typing
 import importlib.metadata
 import pathlib
@@ -6,6 +7,7 @@ import azure.cosmos
 import azure.cosmos.exceptions
 import azure.storage
 import fastapi
+import fastapi.staticfiles
 import fastapi.middleware.cors
 import fastapi_azure_auth.user
 
@@ -117,6 +119,12 @@ async def cosmos_exception_handler(request: fastapi.Request, exc: azure.cosmos.e
                                           content=StatusResponse(status=exc.status_code, msg=exc.exc_msg).model_dump())
 
 
+@app.exception_handler(fastapi.exceptions.RequestValidationError)
+async def validation_exception_handler(request: fastapi.Request, exc: fastapi.exceptions.RequestValidationError):
+    return fastapi.responses.JSONResponse(status_code=422,
+                                          content=StatusResponse(status=422, msg=exc.errors()).model_dump())
+
+
 @app.get('/api/users',
          summary='Return a list of registered users for those with admin authorisation',
          response_model=typing.List[User])
@@ -178,8 +186,8 @@ async def get_user_picture(caller: typing.Annotated[User, fastapi.Depends(valida
 @app.post('/api/users/{code:str}/picture',
           summary='Upload the users picture',
           response_model=StatusResponse)
-async def post_user_picture(file: fastapi.UploadFile,
-                            caller: typing.Annotated[User, fastapi.Depends(validate_user)]):
+async def post_user_picture(caller: typing.Annotated[User, fastapi.Depends(validate_user)],
+                            file: typing.Annotated[fastapi.UploadFile, fastapi.File(description='User picture')]):
     sto_client = blob_container_client()
     cosmos_client = cosmos_container_client()
     if file.content_type not in __content_type_map__.keys():
@@ -191,7 +199,7 @@ async def post_user_picture(file: fastapi.UploadFile,
                                 content_settings=azure.storage.blob.ContentSettings(content_type=file.content_type))
     caller.hasPicture = True
     cosmos_client.upsert_item(caller.model_dump())
-    return StatusResponse(code=200, msg='Picture successfully uploaded')
+    return StatusResponse(status=200, msg='Picture successfully uploaded')
 
 
 @app.delete('/api/users/{code:str}/picture',
@@ -201,10 +209,11 @@ async def remove_user_picture(caller: typing.Annotated[User, fastapi.Depends(val
     sto_client = blob_container_client()
     cosmos_client = cosmos_container_client()
     with sto_client.get_blob_client(blob=caller.id) as blob_blient:
-        blob_blient.delete_blob()
+        if blob_blient.exists():
+            blob_blient.delete_blob(delete_snapshots='include')
     caller.hasPicture = False
     cosmos_client.upsert_item(caller.model_dump())
-    return StatusResponse(code=200, msg='Picture successfully removed')
+    return StatusResponse(status=200, msg='Picture successfully removed')
 
 
 @app.delete('/api/users/{code:str}', summary='Remove a user')
@@ -218,3 +227,7 @@ async def remove_user(caller: typing.Annotated[fastapi_azure_auth.user.User, fas
          response_model=HealthzResponse)
 async def healthz():
     return HealthzResponse(status='OK', version=__version__)
+
+app.mount('/',
+          fastapi.staticfiles.StaticFiles(directory=os.path.join(os.path.dirname(__file__), 'static'), html=True),
+          name='static')

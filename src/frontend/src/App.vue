@@ -1,50 +1,24 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-
-import { store } from './store.js'
-import AppHeader from "./components/AppHeader.vue";
-
-onMounted(async () => {
-  fetch('https://mrmat-xmas-api.azurewebsites.net/api/healthz')
-      .then(r => {
-        if(r.status === 404) throw Error('serverNotFound')
-        return r.json()
-      })
-      .then(d => {
-        store.version = d.version
-        store.appState.isLoading = false
-      })
-      .catch( (e) => {
-        console.log('Got an exception ' + e.reason)
-        store.appState.isError = true
-        store.appState.errorMessageId = e.reason
-        store.appState.isLoading = false
-      })
-})
+import { store } from "./store.ts";
+import AppLoading from "./components/AppLoading.vue"
+import AppError from './components/AppError.vue'
 
 </script>
 
 <template>
-  <RouterView v-slot="{ Component }">
-    <template v-if="Component">
-      <Transition mode="out-in">
-        <KeepAlive>
-          <Suspense>
-            <div>
-              <AppHeader/>
-              <component :is="Component"></component>
-            </div>
-
-            <!-- Loading State -->
-            <template #fallback>
-              Loading...
-            </template>
-          </Suspense>
-        </KeepAlive>
-      </Transition>
-    </template>
-  </RouterView>
+  <header>
+    <div class="inner-wrapper">
+      <h2><router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link></h2>
+      <nav>
+        <router-link to="/making-of" v-if="store.identity.id !== '-1'">Making Of</router-link>
+        <p>{{ store.version }}</p>
+      </nav>
+    </div>
+  </header>
+  <RouterView></RouterView>
+  <AppLoading></AppLoading>
+  <AppError></AppError>
 </template>
 
 <style scoped>

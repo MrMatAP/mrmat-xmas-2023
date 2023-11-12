@@ -89,10 +89,7 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
-        npm run build
-        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/frontend/* ${GITHUB_WORKSPACE}/src/frontend/dist/
-        cd ${GITHUB_WORKSPACE}/src/frontend/dist/
-        zip -r ${GITHUB_WORKSPACE}/frontend.zip .
+        npm run package
         cd ${GITHUB_WORKSPACE}/
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
@@ -100,7 +97,7 @@ jobs:
         PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
         cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/api/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
-        zip -r ${GITHUB_WORKSPACE}/api.zip .
+        zip -r ${GITHUB_WORKSPACE}/backend.zip .
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
@@ -120,24 +117,13 @@ jobs:
         prerelease: false
         title: "Release ${{ env.MRMAT_VERSION }}"
 
-    - name: Conditional Deploy (API)
+    - name: Conditional Deploy
       uses: azure/webapps-deploy@v3
       if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-api
       with:
         app-name: mrmat-xmas-api
         publish-profile: ${{ secrets.publishprofile_api }}
-        package: api.zip
-        type: ZIP
-        clean: true
-
-    - name: Conditional Deploy (Frontend)
-      uses: azure/webapps-deploy@v3
-      if: (github.event.pull_request.merged == true && github.base_ref == 'main')
-      id: deploy-to-frontend
-      with:
-        app-name: mrmat-xmas
-        publish-profile: ${{ secrets.publishprofile_frontend }}
-        package: frontend.zip
+        package: backend.zip
         type: ZIP
         clean: true

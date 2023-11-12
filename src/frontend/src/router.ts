@@ -5,7 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AppHome from './components/AppHome.vue'
 import MakingOf from "./components/MakingOf.vue";
 import AppStranger from './components/AppStranger.vue'
-import AppFailed from './components/AppFailed.vue'
+import AppError from './components/AppError.vue'
 import NotFound from './components/NotFound.vue'
 import { auth_code } from './auth_code.ts'
 
@@ -28,15 +28,7 @@ export const router = createRouter({
             }
         },
         {
-            path: '/cl/:code?',
-            name: 'codelogin',
-            component: AppHome,
-            meta: {
-                requiresCodeAuthentication: true,
-            }
-        },
-        {
-            path: '/making-of',
+            path: '/making-of/',
             name: 'makingof',
             component: MakingOf,
             meta: {
@@ -54,7 +46,7 @@ export const router = createRouter({
         {
             path: '/failed',
             name: 'failed',
-            component: AppFailed,
+            component: AppError,
             meta: {
                 requiresCodeAuthentication: false,
             }
@@ -73,9 +65,7 @@ export const router = createRouter({
 router.beforeEach( async (to) => {
     if(! to.meta.requiresCodeAuthentication) return true
     if(to.meta.requiresCodeAuthentication) {
-        if (! await auth_code.authenticate(to.params.code as string)) return { name: 'stranger' }
-        if(to.name === 'codelogin') return { name: 'home', params: {} }
-        return true
+        if(await auth_code.authenticate(to.query.c as string)) return true
     }
-    return { name: 'stranger' }
+    return { path: '/stranger' }
 })
