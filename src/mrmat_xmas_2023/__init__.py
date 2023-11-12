@@ -55,7 +55,7 @@ def validate_admin(user: fastapi_azure_auth.user.User = fastapi.Depends(azure_sc
 
 def validate_user(code: str) -> User:
     """
-    Validate whether a code-authenticated user exists
+    Validate whether a code-authenticated user exists and return it
     Args:
         code: The user code provided
 
