@@ -66,7 +66,7 @@ def validate_user(code: str) -> User:
         xmas_container_client = cosmos_container_client()
         user = xmas_container_client.read_item(item=code, partition_key=code)
         return User.from_cosmos(user)
-    except azure.cosmos.exceptions.CosmosHttpResponseError as chre:
+    except azure.cosmos.exceptions.CosmosHttpResponseError:
         raise XmasException(code=401, msg='Hello Stranger')
 
 
