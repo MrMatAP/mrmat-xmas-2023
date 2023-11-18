@@ -222,9 +222,7 @@ async def remove_user(caller: typing.Annotated[fastapi_azure_auth.user.User, fas
     cosmos_client.delete_item(item=caller.id, partition_key=caller.id)
 
 
-@app.get('/api/healthz',
-         summary='Return health information',
-         response_model=HealthzResponse)
+@app.get('/api/healthz', summary='Return health information', response_model=HealthzResponse)
 async def healthz():
     return HealthzResponse(status='OK', version=__version__)
 
