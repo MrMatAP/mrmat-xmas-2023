@@ -24,23 +24,14 @@ class XmasBackendClient {
             })
     }
 
-    async removeUserPicture(): Promise<boolean> {
-        return await fetch('/api/users/' + store.identity.id + '/picture', {
-            method: 'DELETE'
-        }).then( (response) => {
-            appInsights.trackEvent({ name: 'removeUserPicture' })
-            return response.status === 401 || response.status == 204;
-        })
-    }
-
-    async updateUser() {
+    async putUserMessage() {
         return await fetch('/api/users/' + store.identity.id, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(store.identity) })
             .then( (response) => response.json )
             .then( () => {
-                appInsights.trackEvent({ name: 'updateUserPicture' })
+                appInsights.trackEvent({ name: 'putUserMessage' })
                 return true
             })
     }
