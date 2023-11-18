@@ -2,10 +2,13 @@ import os
 import typing
 import importlib.metadata
 import pathlib
+import logging
 
 import azure.cosmos
 import azure.cosmos.exceptions
 import azure.storage
+import azure.monitor.opentelemetry
+import opentelemetry
 import fastapi
 import fastapi.staticfiles
 import fastapi.middleware.cors
@@ -26,6 +29,9 @@ __content_type_map__ = {
     'image/png': 'png',
 }
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 VERSION_HEADER = 'X-Version'
 config = Config(__config_file__)
 app_identity = AppIdentity()
@@ -40,6 +46,16 @@ azure_scheme = fastapi_azure_auth.SingleTenantAzureAuthorizationCodeBearer(
         'api://xmas-backend/admin': 'admin'
     }
 )
+try:
+    azure.monitor.opentelemetry.configure_azure_monitor(
+        connection_string=config.telemetry_connection_string,
+        credential=app_identity()
+    )
+    tracer = opentelemetry.trace.get_tracer(__name__)
+    with tracer.start_as_current_span('hello'):
+        print('Hello World')
+except Exception as e:
+    pass
 
 
 def validate_admin(user: fastapi_azure_auth.user.User = fastapi.Depends(azure_scheme)) -> fastapi_azure_auth.user.User:
@@ -142,7 +158,8 @@ async def list_users(caller: typing.Annotated[fastapi_azure_auth.user.User, fast
          summary='Return user information for a given code',
          response_model=User)
 async def get_user(caller: typing.Annotated[User, fastapi.Depends(validate_user)]) -> User:
-    return caller
+    with tracer.start_as_current_span('get_user') as span:
+        return caller
 
 
 @app.post('/api/users',

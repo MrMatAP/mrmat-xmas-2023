@@ -62,6 +62,7 @@ class Config:
                                                               'xmas'))
     container_directory: str = dataclasses.field(default=os.getenv('CONTAINER_DIRECTORY',
                                                                    '2023'))
+    telemetry_connection_string: str = dataclasses.field(default=os.getenv('APPLICATIONINSIGHTS_CONNECTION_STRING'))
 
     def __init__(self, config_file: pathlib.Path = None):
         self._logger = logging.getLogger(f'{self.__class__.__module__}.{self.__class__.__name__}')
