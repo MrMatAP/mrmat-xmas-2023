@@ -122,7 +122,7 @@ jobs:
       #if: (github.event.pull_request.merged == true && github.base_ref == 'main')
       id: deploy-to-backend
       with:
-        app-name: mrmat-xmas-api
+        app-name: mrmat-xmas
         publish-profile: ${{ secrets.publishprofile_backend }}
         package: backend.zip
         type: ZIP
