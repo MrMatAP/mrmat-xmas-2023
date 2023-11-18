@@ -5,6 +5,11 @@
     <module name="mrmat-xmas-2023" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="OTEL_EXPERIMENTAL_RESOURCE_DETECTORS" value="otel" />
+      <env name="OTEL_RESOURCE_ATTRIBUTES" value="service.instance_id=mrmat-xmas" />
+      <env name="OTEL_SERVICE_NAME" value="xmas-backend" />
+    </envs>
     <option name="SDK_HOME" value="/opt/dyn/python/mrmat-xmas-2023/bin/python" />
     <option name="SDK_NAME" value="Python 3.11 (mrmat-xmas-2023)" />
     <option name="WORKING_DIRECTORY" value="" />
