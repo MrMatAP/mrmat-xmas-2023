@@ -20,8 +20,7 @@ class CodeAuthentication {
             window.localStorage.setItem(CodeAuthentication.LOCAL_STORAGE_KEY, code)
             return this.isAuthenticated
         } catch(error) {
-            store.appState.isError = true
-            store.appState.errorMessageId = (error as Error).message
+            // It is not an error to be a stranger
             return false
         } finally {
             store.appState.isLoading = false
