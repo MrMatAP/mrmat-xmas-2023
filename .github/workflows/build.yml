@@ -86,6 +86,7 @@ jobs:
         CONTAINER_ENDPOINT: ${{ secrets.CONTAINER_ENDPOINT }}
         CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
         CONTAINER_DIRECTORY: ${{ secrets.CONTAINER_DIRECTORY }}
+        APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
       run: |
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
@@ -120,10 +121,10 @@ jobs:
     - name: Conditional Deploy
       uses: azure/webapps-deploy@v3
       if: (github.event.pull_request.merged == true && github.base_ref == 'main')
-      id: deploy-to-api
+      id: deploy-to-backend
       with:
-        app-name: mrmat-xmas-api
-        publish-profile: ${{ secrets.publishprofile_api }}
+        app-name: mrmat-xmas
+        publish-profile: ${{ secrets.publishprofile_backend }}
         package: backend.zip
         type: ZIP
         clean: true

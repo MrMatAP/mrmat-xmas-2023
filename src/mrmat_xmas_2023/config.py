@@ -43,19 +43,26 @@ class Config:
     config file.
     """
 
+    tenant_id: str = dataclasses.field(default=os.getenv('AZURE_TENANT_ID'))
     backend_client_id: str = dataclasses.field(default=os.getenv('AZURE_CLIENT_ID'))
     backend_client_secret: str = dataclasses.field(default=os.getenv('AZURE_CLIENT_SECRET'))
     openapi_client_id: str = dataclasses.field(default=os.getenv('OPENAPI_CLIENT_ID'))
     testclient_client_id: str = dataclasses.field(default=os.getenv('TESTCLIENT_CLIENT_ID'))
     testclient_client_secret: str = dataclasses.field(default=os.getenv('TESTCLIENT_CLIENT_SECRET'))
-    tenant_id: str = dataclasses.field(default=os.getenv('AZURE_TENANT_ID'))
-    cosmos_endpoint: str = dataclasses.field(default=os.getenv('COSMOS_ENDPOINT'))
+    cosmos_endpoint: str = dataclasses.field(default=os.getenv('COSMOS_ENDPOINT',
+                                                               'https://mrmat-cosmosdb.documents.azure.com:443/'))
     cosmos_key: str = dataclasses.field(default=os.getenv('COSMOS_KEY'))
-    cosmos_db: str = dataclasses.field(default=os.getenv('COSMOS_DB'))
-    cosmos_container: str = dataclasses.field(default=os.getenv('COSMOS_CONTAINER'))
-    container_endpoint: str = dataclasses.field(default=os.getenv('CONTAINER_ENDPOINT'))
-    container_name: str = dataclasses.field(default=os.getenv('CONTAINER_NAME'))
-    container_directory: str = dataclasses.field(default=os.getenv('CONTAINER_DIRECTORY'))
+    cosmos_db: str = dataclasses.field(default=os.getenv('COSMOS_DB',
+                                                         'mrmat-cosmosdb'))
+    cosmos_container: str = dataclasses.field(default=os.getenv('COSMOS_CONTAINER',
+                                                                'xmas'))
+    container_endpoint: str = dataclasses.field(default=os.getenv('CONTAINER_ENDPOINT',
+                                                                  'https://stomrmatinfra.blob.core.windows.net/'))
+    container_name: str = dataclasses.field(default=os.getenv('CONTAINER_NAME',
+                                                              'xmas'))
+    container_directory: str = dataclasses.field(default=os.getenv('CONTAINER_DIRECTORY',
+                                                                   '2023'))
+    telemetry_connection_string: str = dataclasses.field(default=os.getenv('APPLICATIONINSIGHTS_CONNECTION_STRING'))
 
     def __init__(self, config_file: pathlib.Path = None):
         self._logger = logging.getLogger(f'{self.__class__.__module__}.{self.__class__.__name__}')

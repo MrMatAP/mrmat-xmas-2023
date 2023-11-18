@@ -2,6 +2,7 @@ import os
 import typing
 import importlib.metadata
 import pathlib
+import logging
 
 import azure.cosmos
 import azure.cosmos.exceptions
@@ -25,6 +26,9 @@ __content_type_map__ = {
     'image/jpeg': 'jpeg',
     'image/png': 'png',
 }
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 VERSION_HEADER = 'X-Version'
 config = Config(__config_file__)
@@ -222,12 +226,28 @@ async def remove_user(caller: typing.Annotated[fastapi_azure_auth.user.User, fas
     cosmos_client.delete_item(item=caller.id, partition_key=caller.id)
 
 
-@app.get('/api/healthz',
-         summary='Return health information',
-         response_model=HealthzResponse)
+@app.get('/api/healthz', summary='Return health information', response_model=HealthzResponse)
 async def healthz():
     return HealthzResponse(status='OK', version=__version__)
 
-app.mount('/',
-          fastapi.staticfiles.StaticFiles(directory=os.path.join(os.path.dirname(__file__), 'static'), html=True),
+
+class SPAStaticFilesWithFallback(fastapi.staticfiles.StaticFiles):
+    """
+    An override for static files to fall back to the index if the relative path has not been found.
+    This permits us to serve an SPA from a single webapp.
+    """
+
+    def __init__(self, directory: os.PathLike, index='index.html'):
+        self.index = index
+        super().__init__(directory=directory, html=True, check_dir=True)
+
+    def lookup_path(self, path: str) -> typing.Tuple[str, typing.Optional[os.stat_result]]:
+        full_path, stat_result = super().lookup_path(path)
+        if not stat_result:
+            return super().lookup_path(self.index)
+        return full_path, stat_result
+
+
+app.mount(path='/',
+          app=SPAStaticFilesWithFallback(directory=pathlib.Path(os.path.dirname(__file__), 'static')),
           name='static')
