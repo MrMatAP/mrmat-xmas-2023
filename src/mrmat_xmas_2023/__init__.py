@@ -7,8 +7,6 @@ import logging
 import azure.cosmos
 import azure.cosmos.exceptions
 import azure.storage
-import azure.monitor.opentelemetry
-import opentelemetry
 import fastapi
 import fastapi.staticfiles
 import fastapi.middleware.cors
@@ -46,11 +44,6 @@ azure_scheme = fastapi_azure_auth.SingleTenantAzureAuthorizationCodeBearer(
         'api://xmas-backend/admin': 'admin'
     }
 )
-azure.monitor.opentelemetry.configure_azure_monitor(
-    connection_string=config.telemetry_connection_string,
-    credential=app_identity()
-)
-tracer = opentelemetry.trace.get_tracer(__name__)
 
 
 def validate_admin(user: fastapi_azure_auth.user.User = fastapi.Depends(azure_scheme)) -> fastapi_azure_auth.user.User:
