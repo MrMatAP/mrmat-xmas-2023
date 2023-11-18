@@ -123,7 +123,7 @@ jobs:
       id: deploy-to-backend
       with:
         app-name: mrmat-xmas-api
-        publish-profile: ${{ secrets.publishprofile_api }}
+        publish-profile: ${{ secrets.publishprofile_backend }}
         package: backend.zip
         type: ZIP
         clean: true
