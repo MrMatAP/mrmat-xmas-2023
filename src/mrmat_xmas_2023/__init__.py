@@ -46,16 +46,11 @@ azure_scheme = fastapi_azure_auth.SingleTenantAzureAuthorizationCodeBearer(
         'api://xmas-backend/admin': 'admin'
     }
 )
-try:
-    azure.monitor.opentelemetry.configure_azure_monitor(
-        connection_string=config.telemetry_connection_string,
-        credential=app_identity()
-    )
-    tracer = opentelemetry.trace.get_tracer(__name__)
-    with tracer.start_as_current_span('hello'):
-        print('Hello World')
-except Exception as e:
-    pass
+azure.monitor.opentelemetry.configure_azure_monitor(
+    connection_string=config.telemetry_connection_string,
+    credential=app_identity()
+)
+tracer = opentelemetry.trace.get_tracer(__name__)
 
 
 def validate_admin(user: fastapi_azure_auth.user.User = fastapi.Depends(azure_scheme)) -> fastapi_azure_auth.user.User:
@@ -158,8 +153,7 @@ async def list_users(caller: typing.Annotated[fastapi_azure_auth.user.User, fast
          summary='Return user information for a given code',
          response_model=User)
 async def get_user(caller: typing.Annotated[User, fastapi.Depends(validate_user)]) -> User:
-    with tracer.start_as_current_span('get_user') as span:
-        return caller
+    return caller
 
 
 @app.post('/api/users',
