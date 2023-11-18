@@ -86,6 +86,7 @@ jobs:
         CONTAINER_ENDPOINT: ${{ secrets.CONTAINER_ENDPOINT }}
         CONTAINER_NAME: ${{ secrets.CONTAINER_NAME }}
         CONTAINER_DIRECTORY: ${{ secrets.CONTAINER_DIRECTORY }}
+        APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
       run: |
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
