@@ -2,6 +2,7 @@
 
 import { store } from './store.ts'
 import { Identity, STRANGER } from './store.ts'
+import { appInsights } from './telemetry.ts'
 
 class CodeAuthentication {
 
@@ -16,11 +17,14 @@ class CodeAuthentication {
             let code = uriCode || window.localStorage.getItem(CodeAuthentication.LOCAL_STORAGE_KEY)
             if(!code) throw Error('identityNotFound')
             store.identity = await this.authenticateFromCode(code)
+            appInsights.setAuthenticatedUserContext(code, code)
             this.isAuthenticated = store.identity.id !== STRANGER.id
             window.localStorage.setItem(CodeAuthentication.LOCAL_STORAGE_KEY, code)
             return this.isAuthenticated
         } catch(error) {
             // It is not an error to be a stranger
+            appInsights.setAuthenticatedUserContext('stranger', 'stranger')
+            appInsights.trackEvent({ name: 'strangerLogin' })
             return false
         } finally {
             store.appState.isLoading = false

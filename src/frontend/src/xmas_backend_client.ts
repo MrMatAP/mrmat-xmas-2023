@@ -1,6 +1,7 @@
 // Xmas Backend Client
 
 import { store } from './store.ts'
+import { appInsights } from './telemetry.ts'
 
 class XmasBackendClient {
 
@@ -17,6 +18,7 @@ class XmasBackendClient {
             body: formData })
             .then( (response) => response.json )
             .then( () => {
+                appInsights.trackEvent({ name: 'postUserPicture' })
                 store.identity.hasPicture = true
                 return true
             })
@@ -26,6 +28,7 @@ class XmasBackendClient {
         return await fetch('/api/users/' + store.identity.id + '/picture', {
             method: 'DELETE'
         }).then( (response) => {
+            appInsights.trackEvent({ name: 'removeUserPicture' })
             return response.status === 401 || response.status == 204;
         })
     }
@@ -37,6 +40,7 @@ class XmasBackendClient {
             body: JSON.stringify(store.identity) })
             .then( (response) => response.json )
             .then( () => {
+                appInsights.trackEvent({ name: 'updateUserPicture' })
                 return true
             })
     }
