@@ -6,7 +6,7 @@ import { xmas_backend_client } from "../xmas_backend_client.ts";
 import ImagePlaceholder from "./ImagePlaceholder.vue";
 import {useI18n} from "vue-i18n";
 
-const { t, locale } = useI18n({ useScope: 'global' })
+const { locale } = useI18n({ useScope: 'global' })
 const userPicture = ref('')
 const fileSelector = ref()
 
