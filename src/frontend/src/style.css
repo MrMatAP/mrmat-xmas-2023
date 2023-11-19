@@ -13,6 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
+  --xmas-snow: #fffafa;
   --xmas-red: #580404;
   --xmas-light-olive: #f1d0b2;
   --xmas-dark-olive: #acb285;
@@ -31,92 +32,17 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  width: 100%;
+  background-color: var(--xmas-snow);
 }
 
 #app {
-  min-height: 100vh;
-  max-width: 1280px;
-  width: 60%;
+  width: 100vw;
+  /* min-width: 650px; */
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 1rem;
   z-index: var(--z-content);
-
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: flex-start;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    background-color: var(--xmas-dark-olive);
-  }
-}
-
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
 }
 
 article {
@@ -128,45 +54,16 @@ article {
   --green: 230;
   --blue: 230;
   --aa-brightness: calc((
-    (var(--red) * 299) +
-    (var(--green) * 587) +
-    (var(--blue) * 114)
-    ) / 1000);
+  (var(--red) * 299) +
+  (var(--green) * 587) +
+  (var(--blue) * 114)
+  ) / 1000);
 
   --aa-color: calc((var(--aa-brightness) - 128) * -1000);
-  /* background: rgb(var(--red), var(--green), var(--blue)); */
   color: rgb(var(--aa-color), var(--aa-color), var(--aa-color));
 }
 
-article h1 {
-  font-size: 2.5em;
-  line-height: calc(1ex / 0.42);
-  margin: calc(1ex / 0.42) 0;
-  color: var(--xmas-green);
-}
-
-article h2 {
-  font-size: 2em;
-  line-height: calc(1ex / 0.42);
-  margin: calc(1ex / 0.42) 0;
-  color: var(--xmas-green);
-}
-
-article h3 {
-  font-size: 1.75em;
-  line-height: calc(1ex / 0.38);
-  margin: calc(1ex / 0.38) 0;
-  color: var(--xmas-green);
-}
-
-article h4 {
-  font-size: 1.5em;
-  line-height: calc(1ex / 0.37);
-  margin: calc(1ex / 0.37) 0;
-  color: var(--xmas-green);
-}
-
-article p {
+p {
   font-size: 1em;
   line-height: calc(1ex / 0.32);
   margin: calc(1ex / 0.32) 0;
@@ -174,7 +71,7 @@ article p {
   max-width: 80%;
 }
 
-article p[lang="en"] {
+p[lang="en"] {
   text-align: justify;
   hyphens: auto;
 }
@@ -185,31 +82,50 @@ article p[lang="en"] {
   }
 }
 
-header {
-  max-height: 50px;
-  flex: 1 1 auto;
+h1 {
+  /* font-size: 2.5em; */
+  font-size: 4vw;
+  max-font-size: 4vw;
+  line-height: calc(1ex / 0.42);
+  margin: calc(1ex / 0.42) 0;
+  color: var(--xmas-green);
 }
 
-.inner-wrapper {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
+h2 {
+  font-size: 2em;
+  line-height: calc(1ex / 0.42);
+  margin: calc(1ex / 0.42) 0;
+  color: var(--xmas-green);
 }
 
-header nav {
-  display: flex;
-  align-content: baseline;
-  margin-left: auto;
-}
-header nav > * {
-  padding: 10px;
+h3 {
+  font-size: 1.75em;
+  line-height: calc(1ex / 0.38);
+  margin: calc(1ex / 0.38) 0;
+  color: var(--xmas-green);
 }
 
-header nav > p {
-  font-size: 8px;
+h4 {
+  font-size: 1.5em;
+  line-height: calc(1ex / 0.37);
+  margin: calc(1ex / 0.37) 0;
+  color: var(--xmas-green);
 }
 
-header * a {
+a {
+  font-weight: 500;
   color: var(--xmas-red);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--xmas-red);
+  text-decoration: underline;
+}
+a:visited {
+  color: var(--xmas-red);
+}
+
+img {
+  max-width: 100%;
+  width: 80vb;
 }

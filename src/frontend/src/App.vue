@@ -3,15 +3,13 @@ import { RouterView } from 'vue-router'
 import { store } from "./store.ts";
 import AppLoading from "./components/AppLoading.vue"
 import AppError from './components/AppError.vue'
-
 </script>
 
 <template>
   <header>
     <div class="inner-wrapper">
-      <h2><router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link></h2>
+      <h1><router-link to="/">{{ store.identity.greeting }}, {{ store.identity.name }}</router-link></h1>
       <nav>
-        <router-link to="/making-of" v-if="store.identity.id !== '-1'">Making Of</router-link>
         <p>{{ store.version }}</p>
       </nav>
     </div>
@@ -22,4 +20,40 @@ import AppError from './components/AppError.vue'
 </template>
 
 <style scoped>
+header {
+  min-height: 1.5em;
+  padding-bottom: 1em;
+  overflow: clip;
+}
+
+.inner-wrapper {
+  align-items: center;
+}
+
+header nav {
+  align-content: baseline;
+  margin-left: auto;
+}
+
+header * h1 {
+  font-size: 4vw;
+  color: var(--xmas-green);
+  margin: 0 0 0 0;
+}
+
+header * p {
+  font-size: 0.5em;
+  color: var(--xmas-green);
+}
+
+header * a {
+  color: var(--xmas-red);
+}
+header * a:hover {
+  color: var(--xmas-red);
+  text-decoration: none;
+}
+header * a:visited {
+  color: var(--xmas-red);
+}
 </style>

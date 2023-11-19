@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, ref, } from 'vue'
+import { onMounted, ref, } from 'vue'
 
 const props = defineProps<{
   imageUrl: string
@@ -8,16 +8,12 @@ const props = defineProps<{
 
 const loading = ref(true)
 const userPicture = ref()
-const canUploadNewImage = computed(() => {
-  return !props.hasImage
-})
 
 onMounted( () => {
-  if(props.hasImage) {
-    loading.value = true
-    userPicture.value.onload = () => { loading.value = false }
-  } else {
-    loading.value = false
+  loading.value = true
+  userPicture.value.onload = () => { loading.value = false }
+  if(! props.hasImage) {
+    userPicture.value.src = '/tap-to-update.png'
   }
 })
 
@@ -26,7 +22,6 @@ onMounted( () => {
 <template>
   <div class="imageplaceholder">
     <img v-show="!loading" :src="imageUrl" alt="Your Image" ref="userPicture" @click.prevent="$emit('selectPicture')"/>
-    <p v-show="canUploadNewImage" @click.prevent="$emit('selectPicture')">Tap to add your picture</p>
     <div v-show="loading" class="overlay">
       <div class="loader"></div>
     </div>
@@ -35,18 +30,10 @@ onMounted( () => {
 
 <style scoped>
 .imageplaceholder {
-  width: 80%;
-  max-width: 80%;
-  min-height: 400px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--xmas-dark-green);
+  width: 80vb;
+  max-width: 80vb;
+  min-height: 390px;
   cursor: pointer;
-}
-
-.imageplaceholder img {
-  width: 80%;
-  max-width: 80%;
 }
 
 .imageplaceholder p {
@@ -64,8 +51,8 @@ onMounted( () => {
 }
 
 .loader {
-  border: 16px solid var(--xmas-silver);
-  border-top: 16px solid var(--xmas-red);
+  border: 16px solid var(--xmas-red);
+  border-top: 16px solid var(--xmas-silver);
   border-radius: 50%;
   width: 60px;
   height: 60px;

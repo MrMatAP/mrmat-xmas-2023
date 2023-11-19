@@ -3,7 +3,6 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
 import AppHome from './components/AppHome.vue'
-import MakingOf from "./components/MakingOf.vue";
 import AppStranger from './components/AppStranger.vue'
 import AppError from './components/AppError.vue'
 import NotFound from './components/NotFound.vue'
@@ -23,14 +22,6 @@ export const router = createRouter({
             path: '/',
             name: 'home',
             component: AppHome,
-            meta: {
-                requiresCodeAuthentication: true,
-            }
-        },
-        {
-            path: '/making-of/',
-            name: 'makingof',
-            component: MakingOf,
             meta: {
                 requiresCodeAuthentication: true,
             }

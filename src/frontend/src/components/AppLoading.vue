@@ -34,8 +34,8 @@ import { store } from '../store.js'
 }
 
 .loader {
-  border: 16px solid var(--xmas-silver);
-  border-top: 16px solid var(--xmas-red);
+  border: 16px solid var(--xmas-red);
+  border-top: 16px solid var(--xmas-silver);
   border-radius: 50%;
   width: 60px;
   height: 60px;
