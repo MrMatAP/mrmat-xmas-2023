@@ -4,7 +4,9 @@ import { store } from "../store.ts"
 
 import { xmas_backend_client } from "../xmas_backend_client.ts";
 import ImagePlaceholder from "./ImagePlaceholder.vue";
+import {useI18n} from "vue-i18n";
 
+const { t, locale } = useI18n({ useScope: 'global' })
 const userPicture = ref('')
 const fileSelector = ref()
 
@@ -29,19 +31,14 @@ onMounted( () => {
   if(store.identity.hasPicture) {
     userPicture.value = xmas_backend_client.userPicture(store.identity.id)
   }
+  locale.value = store.identity.language
 })
 
 </script>
 
 <template>
   <article>
-    <p>
-      My analogue engineering challenge for you this year is to build <a href="http://www.origami-instructions.com/origami-modular-toshies-jewel.html">Toshie's Jewel</a>
-      from the three <a href="https://en.m.wikipedia.org/wiki/Sonobe">Sonobe</a> units that I'm sending along. You will
-      recognise the shape of a Sonobe unit on the bottom left of the picture below, the intermediate unwrapped stage on
-      the bottom middle and the completely folded Toshies Jewel on the bottom right. You can use the completed Jewel to
-      wrap a small present or attach a string to hang it up somewhere.
-    </p>
+    <p v-html="$t('main_my_analogue_engineering')"></p>
     <p>
       <a title="Cmglee, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons"
          href="https://commons.wikimedia.org/wiki/File:Cmglee_sonobe_models.jpg">
@@ -50,21 +47,12 @@ onMounted( () => {
              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Cmglee_sonobe_models.jpg/512px-Cmglee_sonobe_models.jpg">
       </a>
     </p>
-    <p>
-      Sonobe units are some of the basic building blocks of <a href="https://en.m.wikipedia.org/wiki/Modular_origami">Modular Origami</a>.
-      You may decide to expand on this challenge by folding additional Sonobe units to construct more elaborate models, as
-      shown in the upper half of the picture. The numbers next to the model correspond to the Sonobe units you
-      need for the model. Sonobe units are not difficult and quick to fold, but consider recruiting your friends and
-      family to fold them for you ;o)
-    </p>
+    <p v-html="$t('main_sonobe_units_are')"></p>
     <p>
       <a title="Cmglee, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Sonobe_folding_assembly.svg"><img width="256" alt="Sonobe folding assembly" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sonobe_folding_assembly.svg/256px-Sonobe_folding_assembly.svg.png"></a>
     </p>
-    <h2>Send me a message</h2>
-    <p>
-      Whatever you do, take a picture of yourself and the result and upload it here along with a message how annoying it
-      was for you to put it together. It will only be shared with me alone.
-    </p>
+    <h2>{{ $t('feedback_send_me')}}</h2>
+    <p>{{ $t('feedback_whatever_you_do')}}</p>
     <div class="form">
       <ImagePlaceholder
           :image-url="userPicture"
@@ -75,65 +63,29 @@ onMounted( () => {
         </div>
         <div class="operations">
           <input ref="fileSelector" type="file" @change.prevent="onPictureSelected" style="display: none"/>
-          <button @click.prevent="onSend">Send</button>
+          <button @click.prevent="onSend">{{ $t('feedback_send_button')}}</button>
         </div>
     </div>
 
     <hr/>
 
-    <h2>Making of</h2>
-    <p>
-      I've started to make Christmas cards for my friends and family back when we lived in Singapore, far away from friends
-      and family back in Europe. I wanted to do something creative that the recipients might not dispose of right after
-      the holiday period is over and also involving technologies I came across in the past year. I generally take the
-      opportunity to do some learning as I come up with this. Not everything involved with this card is readily visible,
-      so what follows is some background to highlight what may not entirely be visible, starting from when you open the
-      envelop containing it.
-    </p>
+    <h2>Making Of</h2>
+    <p>{{ $t('making_of_header')}}</p>
 
-    <h3>The card itself</h3>
-    <p>The card itself is regular paper you can in any stationery shop. But the writing is done with
-      <a href="https://www.jetpens.com/Uni-ball-Signo-Noble-Metal-Metallic-UM-120NM-Gel-Pen-8-Color-Bundle/pd/23873">Uni-ball Signo Metal Metallic UM-120NM Gel Pens</a>,
-      which I purchased in the <a href="https://hands-singapore.com.sg/">Tokyu Hands</a> Paya Lebar outlet back in Singapore.
-      I really miss the availability of Japanese stationery, not only for its incredible variety but also for its incredible
-      sophistication. While not used for this particular card, this specifically applies to <a href="https://youtu.be/PESa3Du3udY?si=XJn_adgbOAzLZOkH">over-engineered Japanese mechanical pencils</a>.
-      I have a rather large collection of those and pick a new one every day to make notes at work with.
-    </p>
+    <h3>{{ $t('making_of_card_title') }}</h3>
+    <p v-html="$t('making_of_card')"></p>
 
-    <h3>The Sonobe Units</h3>
-    <p>
-      I sent out a custom Lego model in 2022 and that clearly was a resounding success. But I didn't want to do this
-    again (expensive, as well as been-there-done-that) and also <a href="https://www.lego.com/de-ch/product/wintertime-polar-bears-40571">Lego itself (!) copied my idea in 2023</a>,
-      although my set was way, way better.
-    </p>
+    <h3>{{ $t('making_of_sonobe_title')}}</h3>
+    <p v-html="$t('making_of_sonobe_1')"></p>
     <img src="/lego.png" alt="Mat's Lego Model">
 
-    <p>
-      Looking for something new and interesting, I came across <a href="https://en.m.wikipedia.org/wiki/Modular_origami">Modular Origami</a>
-      in Fredriksstad on a trip to southern Norway in late summer.</p>
+    <p v-html="$t('making_of_sonobe_2')"></p>
     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" width="600" height="450" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <p>
-      Modular Origami is intriguing because it combines the classic art of Origami with the art of Engineering. Of course there
-    is still no glue involved but you can construct a wide range of new models with more than one piece of
-    paper and it thereby receives interesting mathematical, geometric and architectural properties, which all relate to
-      my day job.
-    </p>
-    <p>
-      The three Sonobe Units I've sent you are just one kind of modular unit and I encourage you to <a href="https://www.google.com/search?q=modular+origami&sca_esv=583745314&tbm=isch&sxsrf=AM9HkKkXJ_uPM4G2xBeZAYguwEnbV16PsA:1700388232484&source=lnms&sa=X&ved=2ahUKEwjh_s7k58-CAxUXyQIHHTPtCFsQ_AUoAXoECAMQAw&biw=1652&bih=1294&dpr=1">google</a> what else you can construct.
-      Sonobe Units are particularly useful to construct geometric forms, particularly suiting polyhedra with equilateral triangular faces.
-      They are flat parallelograms with 45 and 135 degree angles, divided by creases into two diagonal tabs and two corresponding pockets.
-      Combining the three I'm giving you will result in a hexahedron, colloquially called 'Toshies Jewel'. If you spend
-      an evening folding 30 Sonobe units, you can build the <a href="https://en.wikipedia.org/wiki/Triakis_icosahedron">triakis icosahedron</a>,
-      which looks very, very appropriate for the time of year.
-    </p>
+    <p>{{ $t('making_of_sonobe_3') }}</p>
+    <p v-html="$t('making_of_sonobe_4')"></p>
 
     <h3>Near-Field Communication (NFC) Tags</h3>
-    <p>
-      I needed to lead you to the digital component of my card (what you're reading here) and, in order to greet you
-    by your name, I need to know who you are. The normal way of doing this to ask you to authenticate but I'm sure you
-      don't want to remember yet another password for my Christmas card, of all things. I could have federated any sort
-      of identity you may already have (Google, Facebook/Insta, TikTok or whatever) but that felt iffy.
-    </p>
+    <p>{{ $t('making_of_nfc_1')}}</p>
     <p>
       So not only did I not want you to have to type in some URL from the card, I also needed to relay some identity. In
       the past I used to print out <a href="https://en.wikipedia.org/wiki/QR_code">QR-Codes</a> which you get to see

@@ -3,7 +3,6 @@ import { RouterView } from 'vue-router'
 import { store } from "./store.ts";
 import AppLoading from "./components/AppLoading.vue"
 import AppError from './components/AppError.vue'
-
 </script>
 
 <template>
