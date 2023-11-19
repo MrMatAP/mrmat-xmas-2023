@@ -60,7 +60,6 @@ article {
   ) / 1000);
 
   --aa-color: calc((var(--aa-brightness) - 128) * -1000);
-  /* background: rgb(var(--red), var(--green), var(--blue)); */
   color: rgb(var(--aa-color), var(--aa-color), var(--aa-color));
 }
 
