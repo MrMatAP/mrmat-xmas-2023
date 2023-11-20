@@ -4,7 +4,7 @@
 
 # Build/Test requirements
 
-setuptools~=68.2.2
+setuptools~=69.0.0
 build~=1.0.3                # MIT
 wheel~=0.41.3               # MIT
 pylint~=3.0.2              # MIT
