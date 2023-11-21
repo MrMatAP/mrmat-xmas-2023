@@ -191,7 +191,7 @@ export const i18n = createI18n({
                 'Unglcklicherweise benötigen die interessanteren Bereiche ziemlich schnell eine App und wir wissen alle dass die ' +
                 'Hersteller der bekannten Systeme sich schwer mit solch experimentellen Dingen tun.',
             making_of_frontend_title: 'Die Webseite',
-            making_of_frontend_1: 'Ich habe kein Talent fr Web Programmierung und was ihr hier seht ist keine Ausnahme. ' +
+            making_of_frontend_1: 'Ich habe kein Talent für Web Programmierung und was ihr hier seht ist keine Ausnahme. ' +
                 'Das Problem ist nicht dass Benutzerschnittstellen asynchron und Ereignis-basiert sind, dsa verstehe ich alles. Aber ich finde das ' +
                 'Chaos welches Javascript mit seinen vielen Ausnahmen und Spezialitäten verursacht ganz fürchterlich. Sicher werdet ihr mir sagen dass es nur ' +
                 'ein paar spezielle Dinge sind die man einfach wissen muss but ganz ehrlich, mein Leben ist zu kurz.',
@@ -221,7 +221,7 @@ export const i18n = createI18n({
                 'In diesem Falle wird leider alles etwas kompliziert weil die Hintergrund-App dann für Dinge antworten muss für welche eigenlich die Webseite etwas tun sollte. Es gibt eine ganze Menge von Möglichkeiten um ' +
                 'damit umzugehen aber alle sind hässlich. Es ist der Preis dafür sparsam zu sein.',
             making_of_backend_4: 'Azure WebApps hat die nervige Angewohnheit dass es immer gerne Code neu kompiliert/packetiert wenn man ihn anliefert. Ich hasse das und möchte einfach nur ein fertiges Produkt liefern. Es ist gar ' +
-                'nicht einfach die Microsoft Tools davon zu überzeugen dass das was man hier lieft schon fertig ist aber ich bin froh dass ich gefunden habe wie das zu tun ist denn es ist genau das was ich in einem professionellen Kontext ' +
+                'nicht einfach die Microsoft Tools davon zu überzeugen dass das was man hier liest schon fertig ist aber ich bin froh dass ich gefunden habe wie das zu tun ist denn es ist genau das was ich in einem professionellen Kontext ' +
                 'auch tun muss und will. Aber auch in anderen Bereichen ist Microsoft wie üblich "fast gut". Die Dokumentation lässt immer viel zu wünschen übrig und ihre Beispiele funktionieren für genau die simplen Fälle die ' +
                 'sie sich selbst überlegt haben. Sobald Du nur einen kleinen Schritt aus ihrer Welt machst tauchst Du ganz schnell in ihren Code ein. Das ist üblicherweise nicht ein Problem aber sie helfen sich nicht mit ihrer Inkonsistenz. ' +
                 'Manche Dinge, wie beispielsweise die Instrumentierung von Python für Telemetrie funktionieren überhaupt nicht.'

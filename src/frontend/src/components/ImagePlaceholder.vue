@@ -30,8 +30,6 @@ onMounted( () => {
 
 <style scoped>
 .imageplaceholder {
-  width: 80vb;
-  max-width: 80vb;
   min-height: 390px;
   cursor: pointer;
 }
@@ -40,8 +38,6 @@ onMounted( () => {
   padding: 10px;
   margin: auto auto;
   text-align: center;
-  width: 100%;
-  height: 100%;
 }
 
 .overlay {

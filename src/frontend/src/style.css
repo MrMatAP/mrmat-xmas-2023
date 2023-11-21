@@ -38,8 +38,7 @@ body {
 }
 
 #app {
-  width: 100vw;
-  /* min-width: 650px; */
+  width: 90vw;
   margin: 0 auto;
   padding: 1rem;
   z-index: var(--z-content);
@@ -67,8 +66,7 @@ p {
   font-size: 1em;
   line-height: calc(1ex / 0.32);
   margin: calc(1ex / 0.32) 0;
-  width: 70ch;
-  max-width: 80%;
+  /* width: 70ch; */
 }
 
 p[lang="en"] {
@@ -85,7 +83,6 @@ p[lang="en"] {
 h1 {
   /* font-size: 2.5em; */
   font-size: 4vw;
-  max-font-size: 4vw;
   line-height: calc(1ex / 0.42);
   margin: calc(1ex / 0.42) 0;
   color: var(--xmas-green);
@@ -126,6 +123,6 @@ a:visited {
 }
 
 img {
-  max-width: 100%;
+  max-width: 90vw;
   width: 80vb;
 }
