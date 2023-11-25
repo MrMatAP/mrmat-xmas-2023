@@ -58,9 +58,7 @@ onMounted( () => {
           :image-url="userPicture"
           :has-image="store.identity.hasPicture"
           @select-picture="onSelectPicture"></ImagePlaceholder>
-        <div class="message">
-          <textarea v-model="store.identity.userMessage" placeholder="Your message"></textarea>
-        </div>
+        <textarea v-model="store.identity.userMessage" placeholder="Your message"></textarea>
         <div class="operations">
           <input ref="fileSelector" type="file" @change.prevent="onPictureSelected" style="display: none"/>
           <button @click.prevent="onSend">{{ $t('feedback_send_button')}}</button>
@@ -80,7 +78,7 @@ onMounted( () => {
     <img src="/lego.png" alt="Mat's Lego Model">
 
     <p v-html="$t('making_of_sonobe_2')"></p>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" style="border:0; width: 100%;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <p>{{ $t('making_of_sonobe_3') }}</p>
     <p v-html="$t('making_of_sonobe_4')"></p>
 
@@ -95,7 +93,6 @@ onMounted( () => {
     <p v-html="$t('making_of_frontend_2')"></p>
     <p>{{ $t('making_of_frontend_3')}}</p>
     <p>{{ $t('making_of_frontend_4')}}</p>
-    <p>{{ $t('making_of_frontend_5') }} <label class="snow">Snow</label> <label class="green">Green</label> <label class="silver">Silver</label> <label class="red">Red</label>.</p>
 
     <h3>{{ $t('making_of_backend_title') }}</h3>
     <p v-html="$t('making_of_backend_1')"></p>
@@ -106,10 +103,6 @@ onMounted( () => {
 </template>
 
 <style scoped>
-.form {
-  width: 80vb;
-}
-
 .operations button {
   background-color: var(--xmas-green);
   color: var(--xmas-silver);
@@ -120,33 +113,6 @@ onMounted( () => {
   padding: 12px 20px 12px 20px;
 }
 
-label {
-  border: 1px solid var(--xmas-silver);
-  border-radius: 4px;
-  line-height: calc(1ex / 0.32);
-  padding: 0.2em 1em 0.2em 1em;
-}
-
-label.snow {
-  background-color: var(--xmas-snow);
-  color: var(--xmas-silver);
-}
-
-label.green {
-  background-color: var(--xmas-green);
-  color: var(--xmas-silver);
-}
-
-label.silver {
-  background-color: var(--xmas-silver);
-  color: black;
-}
-
-label.red {
-  background-color: var(--xmas-red);
-  color: var(--xmas-silver);
-}
-
 input[type=text], select, textarea {
   width: 100%;
   padding: 12px;
@@ -155,5 +121,7 @@ input[type=text], select, textarea {
   box-sizing: border-box;
   resize: none;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--xmas-silver);
+  color: var(--xmas-green);
 }
 </style>

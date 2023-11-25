@@ -100,7 +100,6 @@ export const i18n = createI18n({
                 'line-height, number of words and even the text color are dynamically calculated to optimise legibility.',
             making_of_frontend_4: 'Not everyone I send this to is a native English speaker so there is internationalisation based on your identity. It ' +
                 'was also very important to me that the front-end is aware of its build-time version.',
-            making_of_frontend_5: 'The color-scheme is used on this site consists of ',
             making_of_backend_title: 'The back-end',
             making_of_backend_1: 'The back-end is a fairly simple Python application using <a href="https://fastapi.tiangolo.com/">FastAPI</a>, ' +
                 'hosted as an Azure WebApp. FastAPI generally makes a lot of sense to me because it follows my preferred code-first ' +
@@ -207,7 +206,6 @@ export const i18n = createI18n({
                 'werdet ihr bemerken dass die Grösse, Linienhöhe, Anzahl Worte pro Zeile und sogar die Text-Farbe dynamisch für optimale Lesbarkeit berechnet werden.',
             making_of_frontend_4: 'Nicht jeder dem ich dies hier schicke spricht Deutsch, deshalb ist der gesamte Text hier internationalisiert basierend auf einem Attribut eurer Identität. Es war mir ' +
                 'ebenso wichtig dass das front-end seine version kennt (und zwar dynamisch).',
-            making_of_frontend_5: 'Das Farb-schema welches hier benutzt wird ist ',
             making_of_backend_title: 'Die App im Hintergrund',
             making_of_backend_1: 'Die App ist eine relative einfach Python Applikation welche das <a href="https://fastapi.tiangolo.com/">FastAPI</a> framework benutzt, installiert in einer Azure Webapp.' +
                 'FastAPI macht generell grossen Sinn für mich weil es meine bevorzugten Code-First Methode unterstützt und dabei sehr hübsch eine OpenAPI Spezifikation via seine Decorator-Funktionen erstellt. ' +
