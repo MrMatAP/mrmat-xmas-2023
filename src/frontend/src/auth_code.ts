@@ -33,7 +33,6 @@ class CodeAuthentication {
     }
 
     private async authenticateFromCode(code: string): Promise<Identity> {
-        console.log('Authenticating code ' + code)
         return await fetch('/api/users/' + code)
             .then(r => {
                 store.version = r.headers.get(CodeAuthentication.VERSION_HEADER) || 'unknown'
