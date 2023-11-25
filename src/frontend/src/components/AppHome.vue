@@ -4,7 +4,7 @@ import { store } from "../store.ts"
 
 import { xmas_backend_client } from "../xmas_backend_client.ts";
 import ImagePlaceholder from "./ImagePlaceholder.vue";
-import {useI18n} from "vue-i18n";
+import { useI18n, I18nT } from "vue-i18n";
 
 const { locale } = useI18n({ useScope: 'global' })
 const userPicture = ref('')
@@ -38,7 +38,10 @@ onMounted( () => {
 
 <template>
   <article>
-    <p v-html="$t('main_my_analogue_engineering')"></p>
+    <I18nT keypath="main_challenge_1" tag="p">
+      <a href="https://en.m.wikipedia.org/wiki/Sonobe">{{ $t('sonobe_units' )}}</a>
+      <a href="http://www.origami-instructions.com/origami-modular-toshies-jewel.html">{{ $t('toshies_jewel') }}</a>
+    </I18nT>
     <p>
       <a title="Cmglee, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons"
          href="https://commons.wikimedia.org/wiki/File:Cmglee_sonobe_models.jpg">
@@ -47,7 +50,9 @@ onMounted( () => {
              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Cmglee_sonobe_models.jpg/512px-Cmglee_sonobe_models.jpg">
       </a>
     </p>
-    <p v-html="$t('main_sonobe_units_are')"></p>
+    <I18nT keypath="main_challenge_2" tag="p">
+      <a href="https://en.m.wikipedia.org/wiki/Modular_origami">Modular Origami</a>
+    </I18nT>
     <p>
       <a title="Cmglee, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Sonobe_folding_assembly.svg"><img width="256" alt="Sonobe folding assembly" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sonobe_folding_assembly.svg/256px-Sonobe_folding_assembly.svg.png"></a>
     </p>
@@ -58,9 +63,7 @@ onMounted( () => {
           :image-url="userPicture"
           :has-image="store.identity.hasPicture"
           @select-picture="onSelectPicture"></ImagePlaceholder>
-        <div class="message">
-          <textarea v-model="store.identity.userMessage" placeholder="Your message"></textarea>
-        </div>
+        <textarea v-model="store.identity.userMessage" :placeholder="$t('feedback_your_message')"></textarea>
         <div class="operations">
           <input ref="fileSelector" type="file" @change.prevent="onPictureSelected" style="display: none"/>
           <button @click.prevent="onSend">{{ $t('feedback_send_button')}}</button>
@@ -70,46 +73,67 @@ onMounted( () => {
     <hr/>
 
     <h2>Making Of</h2>
-    <p>{{ $t('making_of_header')}}</p>
+    <p>{{ $t('making_of_header_1')}}</p>
+    <p>{{ $t('making_of_header_2')}}</p>
 
     <h3>{{ $t('making_of_card_title') }}</h3>
-    <p v-html="$t('making_of_card')"></p>
+    <I18nT keypath="making_of_card_1" tag="p">
+      <a href="https://www.jetpens.com/Uni-ball-Signo-Noble-Metal-Metallic-UM-120NM-Gel-Pen-8-Color-Bundle/pd/23873">Uni-ball Signo Metal Metallic UM-120NM Gel Pens</a>
+      <a href="https://hands-singapore.com.sg/">Tokyu Hands</a>
+      <a href="https://youtu.be/PESa3Du3udY?si=XJn_adgbOAzLZOkH">{{ $t('making_of_card_overengineered') }}</a>
+    </I18nT>
 
     <h3>{{ $t('making_of_sonobe_title')}}</h3>
-    <p v-html="$t('making_of_sonobe_1')"></p>
-    <img src="/lego.png" alt="Mat's Lego Model">
+    <I18nT keypath="making_of_sonobe_1" tag="p">
+      <a href="https://en.wikipedia.org/wiki/Children_of_Time_(novel)">Adrian Tchaikovsky's Children of Time</a>
+      <a href="https://en.m.wikipedia.org/wiki/Modular_origami">Modular Origami</a>
+    </I18nT>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" style="border:0; width: 100%;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <p>{{ $t('making_of_sonobe_2') }}</p>
+    <I18nT keypath="making_of_sonobe_3">
+      <a href="https://www.google.com/search?q=modular+origami&sca_esv=583745314&tbm=isch&sxsrf=AM9HkKkXJ_uPM4G2xBeZAYguwEnbV16PsA:1700388232484&source=lnms&sa=X&ved=2ahUKEwjh_s7k58-CAxUXyQIHHTPtCFsQ_AUoAXoECAMQAw&biw=1652&bih=1294&dpr=1">Google</a>
+      <a href="https://en.wikipedia.org/wiki/Triakis_icosahedron">Triakis Icosahedron</a>
+    </I18nT>
 
-    <p v-html="$t('making_of_sonobe_2')"></p>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <p>{{ $t('making_of_sonobe_3') }}</p>
-    <p v-html="$t('making_of_sonobe_4')"></p>
-
-    <h3>Near-Field Communication (NFC) Tags</h3>
-    <p>{{ $t('making_of_nfc_1')}}</p>
-    <p v-html="$t('making_of_nfc_2')"></p>
-    <p>{{ $t('making_of_nfc_3')}}</p>
-    <p v-html="$t('making_of_nfc_4')"></p>
+    <h3>{{ $t('making_of_nfc_title')}}</h3>
+    <I18nT keypath="making_of_nfc_1" tag="p">
+      <a href="https://en.wikipedia.org/wiki/QR_code">QR-Codes</a>
+      <a href="https://en.wikipedia.org/wiki/Near-field_communication">NFC Tags</a>
+    </I18nT>
+    <p>{{ $t('making_of_nfc_2')}}</p>
+    <I18nT keypath="making_of_nfc_3">
+      <a href="https://en.wikipedia.org/wiki/Near-field_communication">Near-Field Communication (NFC)</a>
+    </I18nT>
+    <p>{{ $t('making_of_nfc_4')}}</p>
 
     <h3>{{$t('making_of_frontend_title')}}</h3>
     <p>{{ $t('making_of_frontend_1')}}</p>
-    <p v-html="$t('making_of_frontend_2')"></p>
+    <I18nT keypath="making_of_frontend_2" tag="p">
+      <a href="https://www.typescriptlang.org/">TypeScript</a>
+      <a href="https://vuejs.org/">Vue</a>
+    </I18nT>
     <p>{{ $t('making_of_frontend_3')}}</p>
     <p>{{ $t('making_of_frontend_4')}}</p>
-    <p>{{ $t('making_of_frontend_5') }} <label class="snow">Snow</label> <label class="green">Green</label> <label class="silver">Silver</label> <label class="red">Red</label>.</p>
 
     <h3>{{ $t('making_of_backend_title') }}</h3>
-    <p v-html="$t('making_of_backend_1')"></p>
-    <p v-html="$t('making_of_backend_2')"></p>
-    <p v-html="$t('making_of_backend_3')"></p>
-    <p>{{ $t('making_of_backend_4') }}</p>
+    <I18nT keypath="making_of_backend_1" tag="p">
+      <a href="https://python.org" target="_blank">Python</a>
+      <a href="https://fastapi.tiangolo.com/" target="_blank">FastAPI</a>
+      <a href="https://azure.microsoft.com/de-de/products/app-service/web" target="_blank">Azure WebApp</a>
+      <a href="https://swagger.io/blog/code-first-vs-design-first-api/#:~:text=A%20code%2Dfirst%20approach%2C%20as,the%20code%20after%20the%20fact." target="_blank">Code-First</a>
+      <a href="https://en.wikipedia.org/wiki/REST" target="_blank">REST API-Design</a>
+      <a href="https://en.wikipedia.org/wiki/OpenAPI_Specification" target="_blank">OpenAPI</a>
+    </I18nT>
+    <I18nT keypath="making_of_backend_2" tag="p">
+      <a href="https://github.com/MrMatAP/mrmat-xmas-2023" target="_blank">mrmat-xmas-2023</a>
+    </I18nT>
+    <I18nT keypath="making_of_backend_3" tag="p">
+      <a href="https://en.wikipedia.org/wiki/Single-page_application" target="_blank">Single Page Applications (SPA)</a>
+    </I18nT>
   </article>
 </template>
 
 <style scoped>
-.form {
-  width: 80vb;
-}
-
 .operations button {
   background-color: var(--xmas-green);
   color: var(--xmas-silver);
@@ -120,33 +144,6 @@ onMounted( () => {
   padding: 12px 20px 12px 20px;
 }
 
-label {
-  border: 1px solid var(--xmas-silver);
-  border-radius: 4px;
-  line-height: calc(1ex / 0.32);
-  padding: 0.2em 1em 0.2em 1em;
-}
-
-label.snow {
-  background-color: var(--xmas-snow);
-  color: var(--xmas-silver);
-}
-
-label.green {
-  background-color: var(--xmas-green);
-  color: var(--xmas-silver);
-}
-
-label.silver {
-  background-color: var(--xmas-silver);
-  color: black;
-}
-
-label.red {
-  background-color: var(--xmas-red);
-  color: var(--xmas-silver);
-}
-
 input[type=text], select, textarea {
   width: 100%;
   padding: 12px;
@@ -155,5 +152,7 @@ input[type=text], select, textarea {
   box-sizing: border-box;
   resize: none;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--xmas-silver);
+  color: var(--xmas-green);
 }
 </style>
