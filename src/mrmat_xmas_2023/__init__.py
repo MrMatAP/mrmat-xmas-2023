@@ -22,15 +22,12 @@ except importlib.metadata.PackageNotFoundError:
     # You have not yet installed this as a package, likely because you're hacking on it in some IDE
     __version__ = '0.0.0.dev0'
 __config_file__ = pathlib.Path('~/etc/mrmat-xmas-2023.yml').expanduser()
+__version_header__ = 'X-Version'
 __content_type_map__ = {
     'image/jpeg': 'jpeg',
     'image/png': 'png',
 }
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-VERSION_HEADER = 'X-Version'
 config = Config(__config_file__)
 app_identity = AppIdentity()
 cosmos_container_client = CosmosContainerClient(config, app_identity)
@@ -96,7 +93,7 @@ app.add_middleware(
 @app.middleware('common-headers')
 async def add_common_headers(request: fastapi.Request, call_next):
     response = await call_next(request)
-    response.headers[VERSION_HEADER] = __version__
+    response.headers[__version_header__] = __version__
     return response
 
 
