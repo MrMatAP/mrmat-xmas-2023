@@ -41,6 +41,7 @@ onMounted( () => {
     <I18nT keypath="main_challenge_1" tag="p">
       <a href="https://en.m.wikipedia.org/wiki/Sonobe">{{ $t('sonobe_units' )}}</a>
       <a href="http://www.origami-instructions.com/origami-modular-toshies-jewel.html">{{ $t('toshies_jewel') }}</a>
+      <a href="https://youtu.be/lRHxrKjiqYE?si=30ioVpGeTMPn3-Dq">YouTube</a>
     </I18nT>
     <p>
       <a title="Cmglee, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons"
@@ -85,10 +86,10 @@ onMounted( () => {
 
     <h3>{{ $t('making_of_sonobe_title')}}</h3>
     <I18nT keypath="making_of_sonobe_1" tag="p">
-      <a href="https://en.wikipedia.org/wiki/Children_of_Time_(novel)">Adrian Tchaikovsky's Children of Time</a>
+      <a href="https://www.amazon.com/gp/product/B088RF3199?ref_=dbs_m_mng_rwt_calw_tkin_1&storeType=ebooks&qid=1700993834&sr=8-1">Master of the Revels: A Return to Neal Stephensons D.O.D.O</a>
       <a href="https://en.m.wikipedia.org/wiki/Modular_origami">Modular Origami</a>
     </I18nT>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" style="border:0; width: 100%;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2042.7824984429144!2d10.951171428044727!3d59.20293412455325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46440330a960996f%3A0xadcf7eac53734423!2sGamlebyen%2C%201632%20Fredrikstad%2C%20Norway!5e0!3m2!1sen!2sch!4v1700385926829!5m2!1sen!2sch" style="border:0; width: 100%; min-height: 400px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <p>{{ $t('making_of_sonobe_2') }}</p>
     <I18nT keypath="making_of_sonobe_3">
       <a href="https://www.google.com/search?q=modular+origami&sca_esv=583745314&tbm=isch&sxsrf=AM9HkKkXJ_uPM4G2xBeZAYguwEnbV16PsA:1700388232484&source=lnms&sa=X&ved=2ahUKEwjh_s7k58-CAxUXyQIHHTPtCFsQ_AUoAXoECAMQAw&biw=1652&bih=1294&dpr=1">Google</a>
