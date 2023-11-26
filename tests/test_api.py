@@ -2,7 +2,7 @@ import pytest
 import fastapi.testclient
 
 from conftest import missing_configuration
-from mrmat_xmas_2023 import VERSION_HEADER, __version__, cosmos_container_client
+from mrmat_xmas_2023 import __version_header__, __version__, cosmos_container_client
 from mrmat_xmas_2023.model import User, StatusResponse
 
 
@@ -14,8 +14,8 @@ def test_healthz(client: fastapi.testclient.TestClient):
     """
     response = client.get('/api/healthz')
     assert response.status_code == 200
-    assert VERSION_HEADER in response.headers
-    assert response.headers.get(VERSION_HEADER) == __version__
+    assert __version_header__ in response.headers
+    assert response.headers.get(__version_header__) == __version__
 
 
 @pytest.mark.skipif(missing_configuration(), reason='Missing configuration')
@@ -23,7 +23,7 @@ def test_get_users(client: fastapi.testclient.TestClient,
                    admin_token: str):
     response = client.get('/api/users')
     assert response.status_code == 401
-    assert response.headers.get(VERSION_HEADER) == __version__
+    assert response.headers.get(__version_header__) == __version__
 
     response = client.get('/api/users', headers={'Authorization': f'Bearer {admin_token}'})
     assert response.status_code == 200
@@ -36,7 +36,7 @@ def test_create_user(client: fastapi.testclient.TestClient,
                      test_user: User):
     response = client.post('/api/users')
     assert response.status_code == 401
-    assert response.headers.get(VERSION_HEADER) == __version__
+    assert response.headers.get(__version_header__) == __version__
 
     response = client.post('/api/users',
                            headers={'Authorization': f'Bearer {admin_token}'},
