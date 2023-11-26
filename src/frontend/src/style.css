@@ -66,7 +66,7 @@ p {
   font-size: 1em;
   line-height: calc(1ex / 0.32);
   margin: calc(1ex / 0.32) 0;
-  /* width: 70ch; */
+  width: 70ch;
 }
 
 p[lang="en"] {
