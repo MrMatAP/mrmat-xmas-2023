@@ -62,10 +62,10 @@ export const msalPlugin = {
         }
       }
 
-      const status = EventMessageUtils.getInteractionStatusFromEvent(message, state.inProgress);
-      if (status !== null) {
-        state.inProgress = status;
-      }
+      // const status = EventMessageUtils.getInteractionStatusFromEvent(message, state.inProgress);
+      // if (status !== null) {
+      //   state.inProgress = status;
+      // }
     });
   }
 }
