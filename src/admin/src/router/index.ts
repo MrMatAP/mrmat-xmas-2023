@@ -11,6 +11,9 @@ const routes = [
       {
         path: '',
         name: 'Home',
+        meta: {
+          requiresAuth: true
+        },
         // route level code-splitting
         // this generates a separate chunk (Home-[hash].js) for this route
         // which is lazy-loaded when the route is visited.
@@ -40,6 +43,7 @@ export async function isAuthenticated(instance: PublicClientApplication, loginRe
   return instance.handleRedirectPromise().then( () => {
     const accounts = instance.getAllAccounts()
     if(accounts.length > 0) {
+      instance.setActiveAccount(accounts[0])
       return true
     }
 

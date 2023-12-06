@@ -7,14 +7,13 @@ const props = defineProps(['name', 'uuid', 'userPicture', 'userMessage' ])
     :title="props.name"
     :subtitle="props.uuid"
     variant="outlined">
+      <v-img
+          :src="userPicture"
+          aspect-ratio="16/9"
+          height="400px"></v-img>
     <v-card-text class="py-0">
-      <v-img aspect-ratio="16/9" :src="props.userPicture"/>
       <p>{{ props.userMessage }}</p>
     </v-card-text>
-
-    <v-card-actions>
-      <v-btn>Click me</v-btn>
-    </v-card-actions>
   </v-card>
 
 </template>

@@ -9,7 +9,10 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.0.0",
+    "@azure/identity": "^4.0.0",
     "@azure/msal-browser": "^3.5.0",
+    "@azure/storage-blob": "^12.17.0",
     "@mdi/font": "7.0.96",
     "@microsoft/applicationinsights-web": "^3.0.5",
     "core-js": "^3.29.0",

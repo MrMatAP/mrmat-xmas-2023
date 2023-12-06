@@ -1,4 +1,5 @@
 import {PublicClientApplication} from "@azure/msal-browser";
+import {AccessToken, GetTokenOptions, TokenCredential} from "@azure/identity";
 
 export const msalConfig = {
   auth: {
@@ -13,3 +14,18 @@ export const loginRequest = {
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 await msalInstance.initialize();
+
+export class AzureMakesItHardCredential implements TokenCredential {
+
+  token: string
+  expiry: number
+
+  constructor(token: string, expiry: number) {
+    this.token = token
+    this.expiry = expiry
+  }
+
+  getToken(scopes: string | string[], options?: GetTokenOptions): Promise<AccessToken | null> {
+    return Promise.resolve({ token: this.token, expiresOnTimestamp: this.expiry});
+  }
+}

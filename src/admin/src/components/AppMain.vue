@@ -3,7 +3,7 @@
     <v-responsive class="align-center text-center fill-height">
       <PersonCard v-for="item in items"
                   :name="item.name"
-                  :uuid="item.uuid"
+                  :uuid="item.id"
                   :user-picture="item.userPicture"
                   :user-message="item.userMessage"/>
     </v-responsive>
@@ -11,9 +11,53 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
+import { useMsal } from "@/components/useMsal";
+import { useCosmos } from '@/components/useCosmos'
+import { useSto } from '@/components/useSto'
+import { Person } from "../../person";
 import PersonCard from "@/components/PersonCard.vue";
-const items = reactive([
-  { name: 'Mathieu', uuid: '0abc', userPicture: 'https://m.media-amazon.com/images/M/MV5BMGUzYTc2YTgtYTI2My00MDcxLThiYmQtYzQ4NmUyY2MwMmZmXkEyXkFqcGdeQXVyNjEwNDU4MTg@._V1_.jpg', userMessage: 'Hi there' },
-  { name: 'Urs', uuid: 'efga', userPicture: 'https://static01.nyt.com/images/2020/03/31/arts/31tvcol-01/31tvcol-01-videoSixteenByNineJumbo1600.jpg', userMessage: 'foo' }])
+
+const { instance } = useMsal()
+let cosmosClient = await useCosmos()
+let stoClient = await useSto()
+let items = reactive([] as Person[])
+
+async function blobToDataURL(blob: Blob): Promise<string> {
+    const fileReader = new FileReader();
+    return new Promise<string>((resolve, reject) => {
+        fileReader.onloadend = (ev: any) => {
+            resolve(ev.target!.result);
+        };
+        fileReader.onerror = reject;
+        fileReader.readAsDataURL(blob);
+    });
+}
+
+onMounted( () => {
+    cosmosClient.database('mrmat-cosmosdb').container('xmas').items.query('SELECT * FROM c').fetchAll().then( async (response) => {
+        let containerClient = stoClient.getContainerClient('xmas')
+        for(let resource of response.resources) {
+            if(resource.hasPicture) {
+                let blobClient = containerClient.getBlobClient(resource.id)
+                let blobDownloadResponse = await blobClient.getBlockBlobClient().download()
+                let blob = await blobDownloadResponse.blobBody
+                let dataURL = ''
+                if(blob !== undefined) {
+                    dataURL = await blobToDataURL(blob)
+                }
+                items.push(new Person(
+                    resource.id,
+                    resource.name,
+                    resource.greeting,
+                    resource.language,
+                    resource.userMessage,
+                    resource.hasPicture,
+                    dataURL
+                ))
+            }
+        }
+    })
+})
+
 </script>
