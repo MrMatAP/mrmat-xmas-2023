@@ -4,13 +4,15 @@
 
 <script lang="ts" setup>
 import { onMounted } from 'vue'
-import { msalInstance, msalConfig } from "@/aad_auth";
+import { msalInstance, loginRequest } from "@/authConfig";
 
 onMounted(() => {
   try {
-    msalInstance.loginRedirect({});
+    msalInstance.loginRedirect(loginRequest).then( (response) => {
+      console.log
+    })
   } catch (err) {
-    // handle error
+    console.log(err)
   }
 })
 </script>
