@@ -15,7 +15,7 @@ import { onMounted, reactive } from 'vue'
 import { useMsal } from "@/components/useMsal";
 import { useCosmos } from '@/components/useCosmos'
 import { useSto } from '@/components/useSto'
-import { Person } from "../../person";
+import { Person } from "../person.ts";
 import PersonCard from "@/components/PersonCard.vue";
 
 const { instance } = useMsal()
