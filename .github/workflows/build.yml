@@ -91,7 +91,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/src/admin
         npm install
         npm run build
-        cd ${GITHUB_WORKSPACE/src/admin/dist
+        cd ${GITHUB_WORKSPACE}/src/admin/dist
         zip -r ${GITHUB_WORKSPACE}/admin.zip .
 
         cd ${GITHUB_WORKSPACE}/src/frontend
