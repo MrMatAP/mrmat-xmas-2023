@@ -10,10 +10,8 @@ it also does not include the environment variables required for the solution to 
 manually. See the section on configuration below.
 
 The solution consists of a frontend (Vue + TS) as well as a backend (Python). The frontend is build first and integrated
-to be served by the backend as static files. An administrative frontend with full AAD-integrated auth/z/n is planned but
-Microsoft's MSAL library turned out to be so unpredictable to configure for that to only be done for a subtree of the
-application that I decided to put it into its own webapp. The bicep creates that admin webapp but I ran out of time to write
-the code for it this year.
+to be served by the backend as static files. An administrative frontend with full AAD-integrated auth/z/n is in
+`src/admin' (honestly, don't look at it, it's horrific)
 
 Versioning of both the front- and backend is performed by GitHub Actions as MAJOR.MINOR.MICRO. The MICRO version is
 increased every time the pipeline runs. MAJOR and MINOR are manually adjusted for larger functionality changes. The 
@@ -162,3 +160,8 @@ Create this app registration as a confidential app and grant the following API p
 
 * xmas-backend: 'Test.Admin' (Application)
 * xmas-backend: 'user_impersonation' (Delegated)
+
+### App-Registration: xmas-admin
+
+Create this app registration and add delegated 'user_impersonaation' apis for storage account and cosmos
+
