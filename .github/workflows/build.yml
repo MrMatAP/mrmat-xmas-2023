@@ -88,9 +88,16 @@ jobs:
         CONTAINER_DIRECTORY: ${{ secrets.CONTAINER_DIRECTORY }}
         APPLICATIONINSIGHTS_CONNECTION_STRING: ${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}
       run: |
+        cd ${GITHUB_WORKSPACE}/src/admin
+        npm install
+        npm run build
+        cd ${GITHUB_WORKSPACE/src/admin/dist
+        zip -r ${GITHUB_WORKSPACE}/admin.zip .
+
         cd ${GITHUB_WORKSPACE}/src/frontend
         npm install
         npm run package
+
         cd ${GITHUB_WORKSPACE}/
         pip install --user -r dev-requirements.txt
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
@@ -126,5 +133,16 @@ jobs:
         app-name: mrmat-xmas
         publish-profile: ${{ secrets.publishprofile_backend }}
         package: backend.zip
+        type: ZIP
+        clean: true
+
+    - name: Conditional Deploy
+      uses: azure/webapps-deploy@v3
+      if: (github.event.pull_request.merged == true && github.base_ref == 'main')
+      id: deploy-to-admin
+      with:
+        app-name: mrmat-xmas-admin
+        publish-profile: ${{ secrets.publishprofile_admin }}
+        package: admin.zip
         type: ZIP
         clean: true

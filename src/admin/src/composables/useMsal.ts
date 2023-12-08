@@ -2,7 +2,7 @@ import { AccountInfo, InteractionStatus, PublicClientApplication } from "@azure/
 import { getCurrentInstance, Ref, toRefs } from "vue";
 
 export type MsalContext = {
-    instance: PublicClientApplication,
+    msalInstance: PublicClientApplication,
     accounts: Ref<AccountInfo[]>,
     inProgress: Ref<InteractionStatus>
 }
@@ -14,7 +14,7 @@ export function useMsal(): MsalContext {
     }
     const { instance, accounts, inProgress} = toRefs(internalInstance.appContext.config.globalProperties.$msal);
 
-    if (!instance || !accounts || !inProgress) {
+    if (!instance.value || !accounts.value || !inProgress.value) {
         throw "Please install the msalPlugin";
     }
 
@@ -28,7 +28,7 @@ export function useMsal(): MsalContext {
     }
 
     return {
-        instance: instance.value,
+        msalInstance: instance.value,
         accounts,
         inProgress
     }

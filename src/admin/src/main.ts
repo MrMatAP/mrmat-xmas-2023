@@ -4,8 +4,10 @@
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
 
+
 // Plugins
-import { registerPlugins } from '@/plugins'
+import vuetify from "@/plugins/vuetify.ts";
+import router from "@/router";
 import { msalPlugin } from '@/plugins/msalPlugin'
 
 // Components
@@ -13,24 +15,18 @@ import App from './App.vue'
 
 // Composables
 import { createApp } from 'vue'
-import { msalInstance } from "@/authConfig";
-import { AuthenticationResult, EventType } from '@azure/msal-browser'
 
+//
 // Authentication
 
-// const accounts = msalInstance.getAllAccounts()
-// if(accounts.length > 0) {
-//   msalInstance.setActiveAccount(accounts[0])
-// }
-// msalInstance.addEventCallback( (event) => {
-//   if(event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
-//     const payload = event.payload as AuthenticationResult
-//       const account = payload.account
-//       msalInstance.setActiveAccount(account)
-//   }
-// })
+import { msalInstance } from "@/authConfig.ts";
+import { PublicClientApplication } from '@azure/msal-browser';
+
+//
+// App
 
 const app = createApp(App)
-registerPlugins(app)
-app.use(msalPlugin, msalInstance)
+app.use(vuetify)
+    .use(router)
+    .use(msalPlugin, msalInstance as PublicClientApplication)
 app.mount('#app')

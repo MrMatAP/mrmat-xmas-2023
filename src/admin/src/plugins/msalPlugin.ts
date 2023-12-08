@@ -1,5 +1,12 @@
 import { App, reactive } from "vue";
-import { EventMessage, EventMessageUtils, EventType, InteractionStatus, PublicClientApplication, AccountInfo } from "@azure/msal-browser";
+import {
+  EventMessage,
+  EventType,
+  InteractionStatus,
+  PublicClientApplication,
+  AccountInfo,
+  EventMessageUtils
+} from "@azure/msal-browser";
 
 type AccountIdentifiers = Partial<Pick<AccountInfo, "homeAccountId"|"localAccountId"|"username">>;
 
@@ -31,12 +38,10 @@ function accountArraysAreEqual(arrayA: Array<AccountIdentifiers>, arrayB: Array<
 export const msalPlugin = {
   install: (app: App, msalInstance: PublicClientApplication) => {
 
-    const inProgress = InteractionStatus.Startup;
     const accounts = msalInstance.getAllAccounts();
-
     const state = reactive({
       instance: msalInstance,
-      inProgress: inProgress,
+      inProgress: InteractionStatus.Startup as InteractionStatus,
       accounts: accounts
     });
 
@@ -61,11 +66,8 @@ export const msalPlugin = {
           break;
         }
       }
-
-      // const status = EventMessageUtils.getInteractionStatusFromEvent(message, state.inProgress);
-      // if (status !== null) {
-      //   state.inProgress = status;
-      // }
+      const status = EventMessageUtils.getInteractionStatusFromEvent(message, state.inProgress);
+      if (status !== null) state.inProgress = status;
     });
   }
 }
