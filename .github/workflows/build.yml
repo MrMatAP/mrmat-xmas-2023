@@ -91,7 +91,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/src/admin
         npm install
         npm run build
-        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/admin/* ${GITHUB_WORKSPACE}/dist/
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/admin/* ${GITHUB_WORKSPACE}/src/admin/dist/
         cd ${GITHUB_WORKSPACE}/src/admin/dist
         zip -r ${GITHUB_WORKSPACE}/admin.zip .
 
