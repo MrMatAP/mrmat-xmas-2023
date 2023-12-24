@@ -63,30 +63,6 @@ onMounted( async () => {
       loading.value = false
     })
   })
-
-    // cosmosClient.value.database('mrmat-cosmosdb').container('xmas').items.query('SELECT * FROM c').fetchAll().then( async (response) => {
-    //     let containerClient = stoClient.value.getContainerClient('xmas')
-    //     for(let resource of response.resources) {
-    //         if(resource.hasPicture) {
-    //             let blobClient = containerClient.getBlobClient(resource.id)
-    //             let blobDownloadResponse = await blobClient.getBlockBlobClient().download()
-    //             let blob = await blobDownloadResponse.blobBody
-    //             let dataURL = ''
-    //             if(blob !== undefined) {
-    //                 dataURL = await blobToDataURL(blob)
-    //             }
-    //             items.push(new Person(
-    //                 resource.id,
-    //                 resource.name,
-    //                 resource.greeting,
-    //                 resource.language,
-    //                 resource.userMessage,
-    //                 resource.hasPicture,
-    //                 dataURL
-    //             ))
-    //         }
-    //     }
-    // })
 })
 
 </script>
