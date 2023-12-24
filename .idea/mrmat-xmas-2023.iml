@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/var" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.11 (mrmat-xmas-2023)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

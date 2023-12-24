@@ -113,6 +113,12 @@ Having my opinions clash with Microsoft's means I have to tweak their system as 
 
 We then take a zip of the `dist` directory (without the directory itself) and deploy that to Azure.
 
+## Authentication
+
+If you select to authenticate in the webapp UI then the platform deals with auth itself and you must not do it natively
+using msal, but pick up the auth info from a env variable instead. If you still try to do both then strange things will
+happen, notably that there will be a complaint about the redirect URI.
+
 ## Create the AAD/Entra entities
 
 The bicep in `var/azure-infra` currently just creates the Azure WebApps, it does not currently create the service

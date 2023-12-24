@@ -8,7 +8,7 @@ name: Build
 
 env:
   MAJOR: 1
-  MINOR: 0
+  MINOR: 1
   PYTHON_VERSION: 3.11.0
   NODE_VERSION: 20.5.1
 
@@ -91,6 +91,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/src/admin
         npm install
         npm run build
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/admin/* ${GITHUB_WORKSPACE}/src/admin/dist/
         cd ${GITHUB_WORKSPACE}/src/admin/dist
         zip -r ${GITHUB_WORKSPACE}/admin.zip .
 
@@ -103,7 +104,7 @@ jobs:
         pylint --rcfile ${GITHUB_WORKSPACE}/.pylintrc ${GITHUB_WORKSPACE}/src/mrmat_python_cli --exit-zero
         python -m build --wheel -n
         PYTHONPATH=${GITHUB_WORKSPACE}/src python -m pytest
-        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/api/* ${GITHUB_WORKSPACE}/dist/
+        cp -R ${GITHUB_WORKSPACE}/var/azure-webapp/backend/* ${GITHUB_WORKSPACE}/dist/
         cd ${GITHUB_WORKSPACE}/dist
         zip -r ${GITHUB_WORKSPACE}/backend.zip .
 

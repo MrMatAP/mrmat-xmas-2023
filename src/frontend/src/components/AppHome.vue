@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
+import { onMounted, ref, computed } from "vue"
 import { store } from "../store.ts"
 
 import { xmas_backend_client } from "../xmas_backend_client.ts";
@@ -9,9 +9,12 @@ import { useI18n, I18nT } from "vue-i18n";
 const { locale } = useI18n({ useScope: 'global' })
 const userPicture = ref('')
 const fileSelector = ref()
+const uploading = ref(false)
+const isUpdate = computed(() => store.identity.userMessage !== '' )
 
 function onSend() {
-  xmas_backend_client.putUserMessage()
+  uploading.value = true
+  xmas_backend_client.putUserMessage().then( () => uploading.value = false )
 }
 
 function onSelectPicture() {
@@ -20,11 +23,12 @@ function onSelectPicture() {
 
 function onPictureSelected() {
   const localImage = fileSelector.value.files[0]
+  uploading.value = true
   xmas_backend_client.postUserPicture(localImage)
       .then( () => {
-        console.log('Image uploaded')
         userPicture.value = xmas_backend_client.userPicture(store.identity.id)
       })
+      .finally(() => uploading.value = false)
 }
 
 onMounted( () => {
@@ -64,10 +68,15 @@ onMounted( () => {
           :image-url="userPicture"
           :has-image="store.identity.hasPicture"
           @select-picture="onSelectPicture"></ImagePlaceholder>
-        <textarea v-model="store.identity.userMessage" :placeholder="$t('feedback_your_message')"></textarea>
+        <textarea v-model="store.identity.userMessage" :placeholder="$t('feedback_your_message')" :disabled="uploading"></textarea>
         <div class="operations">
-          <input ref="fileSelector" type="file" @change.prevent="onPictureSelected" style="display: none"/>
-          <button @click.prevent="onSend">{{ $t('feedback_send_button')}}</button>
+          <div v-show="!uploading">
+            <input ref="fileSelector" type="file" @change.prevent="onPictureSelected" style="display: none"/>
+            <button @click.prevent="onSend" :disabled="uploading">{{ isUpdate ? $t('feedback_update_button') : $t('feedback_send_button') }}</button>
+          </div>
+          <div v-show="uploading" class="overlay">
+            <div class="loader"></div>
+          </div>
         </div>
     </div>
 
@@ -155,5 +164,26 @@ input[type=text], select, textarea {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   background-color: var(--xmas-silver);
   color: var(--xmas-green);
+}
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+.loader {
+  border: 16px solid var(--xmas-red);
+  border-top: 16px solid var(--xmas-silver);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  z-index: var(--z-loading);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
