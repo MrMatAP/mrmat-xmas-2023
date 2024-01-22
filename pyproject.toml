@@ -26,7 +26,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "fastapi==0.104.1",             # MIT
-    "uvicorn==0.24.0",              # BSD 3-Clause
+    "uvicorn==0.27.0",              # BSD 3-Clause
     "httpx==0.25.2",                # BSD 3-Clause
     "msal==1.25.0",                 # MIT
     "identity==0.3.2",              # MIT
