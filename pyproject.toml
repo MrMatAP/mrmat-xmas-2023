@@ -35,7 +35,7 @@ dependencies = [
     'azure-cosmos==4.5.1',          # MIT
     'azure-storage-blob==12.19.0',  # MIT
     'azure-identity==1.15.0',        # MIT
-    'python-multipart==0.0.6',      # Apache 2.0
+    'python-multipart==0.0.9',      # Apache 2.0
 ]
 dynamic = ["version"]
 
